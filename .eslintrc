@@ -1,0 +1,230 @@
+{
+  "parser": "babel-eslint",
+  "plugins": [
+    "import",
+    "prefer-object-spread",
+    "you-dont-need-lodash-underscore"
+  ],
+  "extends": [
+    "plugin:you-dont-need-lodash-underscore/all-warn"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "import/export": "error",
+    "import/exports-last": "error",
+    "import/extensions": "error",
+    "import/first": [
+      "error",
+      {
+        "absolute-first": true
+      }
+    ],
+    "import/newline-after-import": "error",
+    "import/no-absolute-path": "error",
+    "import/no-duplicates": "error",
+    "import/no-dynamic-require": "error",
+    "import/no-extraneous-dependencies": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-named-as-default": "error",
+    "import/no-named-as-default-member": "error",
+    "import/no-named-default": "error",
+    "import/no-webpack-loader-syntax": "error",
+    "import/order": "error",
+    "prefer-object-spread/prefer-object-spread": "error",
+    "array-bracket-spacing": [
+      "error",
+      "never"
+    ],
+    "array-callback-return": "error",
+    "arrow-body-style": [
+      "error",
+      "as-needed"
+    ],
+    "arrow-parens": "error",
+    "arrow-spacing": "error",
+    "brace-style": "error",
+    "camelcase": "error",
+    "comma-dangle": [
+      "error",
+      "only-multiline"
+    ],
+    "comma-style": [
+      "error",
+      "last"
+    ],
+    "dot-notation": "error",
+    "eol-last": [
+      "error",
+      "always"
+    ],
+    "eqeqeq": "error",
+    "id-length": "error",
+    "key-spacing": [
+      "error",
+      {
+        "align": "value",
+        "beforeColon": false,
+        "afterColon": true
+      }
+    ],
+    "keyword-spacing": "error",
+    "max-len": [
+      "error",
+      {
+        "code": 220
+      }
+    ],
+    "new-cap": [
+      "error",
+      {
+        "capIsNew": false
+      }
+    ],
+    "newline-per-chained-call": "error",
+    "no-array-constructor": "error",
+    "no-case-declarations": "error",
+    "no-class-assign": "error",
+    "no-const-assign": "error",
+    "no-dupe-class-members": "error",
+    "no-else-return": [
+      "error",
+      {
+        "allowElseIf": false
+      }
+    ],
+    "no-eval": "error",
+    "no-iterator": "error",
+    "no-extra-semi": "error",
+    "no-fallthrough": [
+      "error",
+      {
+        "commentPattern": "break"
+      }
+    ],
+    "no-func-assign": "error",
+    "no-loop-func": "error",
+    "no-mixed-operators": "error",
+    "no-mixed-spaces-and-tabs": [
+      "error",
+      "smart-tabs"
+    ],
+    "no-multi-assign": "error",
+    "no-multi-spaces": "error",
+    "no-nested-ternary": "error",
+    "no-new-func": "error",
+    "no-new-object": "error",
+    "no-new-wrappers": "error",
+    "no-param-reassign": "error",
+    "no-restricted-globals": [
+      "error",
+      {
+        "name": "isNaN",
+        "message": "Use Number.isNaN instead of global isNaN. https://github.com/airbnb/javascript#standard-library--isnan"
+      },
+      {
+        "name": "isFinite",
+        "message": "Use Number.isFinite instead of global isFinite. https://github.com/airbnb/javascript#standard-library--isfinite"
+      }
+    ],
+    "no-restricted-properties": [
+      2,
+      {
+        "object": "Math",
+        "property": "pow",
+        "message": "Use exponentiation operator ** when calculating exponentiations. https://github.com/airbnb/javascript#es2016-properties--exponentiation-operator"
+      }
+    ],
+    "no-trailing-spaces": "error",
+    "no-undef": "error",
+    "no-unneeded-ternary": "error",
+    "no-unused-vars": "error",
+    "no-use-before-define": "error",
+    "no-useless-call": "error",
+    "no-useless-constructor": "error",
+    "no-useless-escape": "error",
+    "no-var": "error",
+    "no-warning-comments": [
+      1,
+      {
+        "terms": [
+          "FIXME",
+          "HACK",
+          "TODO",
+          "fixme",
+          "hack",
+          "todo"
+        ],
+        "location": "anywhere"
+      }
+    ],
+    "no-whitespace-before-property": "error",
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "object-shorthand": "error",
+    "one-var": [
+      "error",
+      "never"
+    ],
+    "padded-blocks": [
+      "error",
+      "never"
+    ],
+    "prefer-arrow-callback": "error",
+    "prefer-const": "error",
+    "prefer-destructuring": [
+      "error",
+      {
+        "array": true,
+        "object": true
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+    "quote-props": [
+      "error",
+      "as-needed"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "semi-spacing": [
+      "error",
+      {
+        "before": false,
+        "after": true
+      }
+    ],
+    "semi-style": [
+      "error",
+      "last"
+    ],
+    "space-before-blocks": "error",
+    "space-before-function-paren": [
+      "error",
+      "never"
+    ],
+    "space-in-parens": [
+      "error",
+      "never"
+    ],
+    "space-infix-ops": "error",
+    "spaced-comment": [
+      "error",
+      "always"
+    ],
+    "strict": "off"
+  }
+}

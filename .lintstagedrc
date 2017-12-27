@@ -1,0 +1,18 @@
+{
+  "**/*.js": [
+    "eslint --fix --color",
+    "git add"
+  ],
+  "**/*.json": [
+    "jsonlint --in-place",
+    "git add"
+  ],
+  "**/.*rc": [
+    "jsonlint --in-place",
+    "git add"
+  ],
+  "package.json": [
+    "sort-package-json",
+    "git add"
+  ]
+}
