@@ -40,20 +40,12 @@ console.log(normalizrs);
 ```
 { foos:
    EntitySchema {
-     _key: 'foos',
-     _getId: [Function],
-     _idAttribute: 'id',
-     _mergeStrategy: [Function],
-     _processStrategy: [Function],
-     schema: { fi: [EntitySchema] } },
+     ...
+     schema: { fi: EntitySchema } },
   fis:
    EntitySchema {
-     _key: 'fis',
-     _getId: [Function],
-     _idAttribute: 'id',
-     _mergeStrategy: [Function],
-     _processStrategy: [Function],
-     schema: { foos: [Array] } } }
+     ...
+     schema: { foos: [ EntitySchema ] } } }
 ```
 
 ## API
