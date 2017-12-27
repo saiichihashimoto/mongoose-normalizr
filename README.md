@@ -65,7 +65,3 @@ Outputs an object mapping normalizr entity key names to the entities.
 
 - ```mongooseSchemas``` *(Object)*: An object mapping mongoose model names to mongoose schemas. The keys are not the normalizr entity key names, due to mongoose using [model names in ```ref``` fields](http://mongoosejs.com/docs/api.html#query_Query-populate).
 - ```normalizrEntityKeys``` *(Object)*: An object mapping mongoose model names to normalizr entity key names. This allows the resulting entities to map to each other properly.
-
-## Mongoose Models (non)support
-
-Mongoose schemas are [now isomporphic and can be used in the browser](http://mongoosejs.com/docs/browser.html) while mongoose models exist in the context of a server. normalizr exists primarily for browser use cases and, besides model names, nothing on the model is necessary to generate the normalizr entities.
