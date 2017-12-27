@@ -2,10 +2,14 @@
   "name": "mongoose-normalizr",
   "main": "lib",
   "description": "Define normalizr entities from mongoose schemas",
-  "keywords": ["mongoose", "normalizr"],
-  "license": { "type": "MIT",
-     "url": "https://www.opensource.org/licenses/mit-license.php"
-    },
+  "keywords": [
+    "mongoose",
+    "normalizr"
+  ],
+  "license": {
+    "type": "MIT",
+    "url": "https://www.opensource.org/licenses/mit-license.php"
+  },
   "version": "0.0.0-development",
   "homepage": "http://mongoose-normalizr.com",
   "bugs": {
@@ -20,6 +24,13 @@
     "precommit": "lint-staged",
     "build": "babel src --out-dir lib",
     "semantic-release": "semantic-release"
+  },
+  "release": {
+    "publish": [
+      "semantic-release-build",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
   },
   "dependencies": {
     "normalizr": "^3.2.4"
@@ -40,9 +51,10 @@
     "jsonlint": "github:ginman86/jsonlint",
     "lint-staged": "^6.0.0",
     "npm-run-all": "^4.1.2",
+    "semantic-release": "^11.0.2",
+    "semantic-release-build": "^1.1.0",
     "sort-package-json": "^1.7.1",
-    "validate-commit-msg": "^2.14.0",
-    "semantic-release": "^11.0.2"
+    "validate-commit-msg": "^2.14.0"
   },
   "config": {
     "commitizen": {
@@ -51,9 +63,5 @@
     "validate-commit-msg": {
       "helpMessage": "Install commitizen and use `git cz` instead of `git commit` https://github.com/commitizen/cz-cli#installing-the-command-line-tool"
     }
-  },
-  "engines": {
-    "node": ">=8.9.3 <10.0.0",
-    "npm": ">=5.5.1 <6.0.0"
   }
 }
