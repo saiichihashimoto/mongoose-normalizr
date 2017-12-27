@@ -1,5 +1,7 @@
 # mongoose-normalizr
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/saiichihashimoto/mongoose-normalizr.svg)](https://greenkeeper.io/)
+
 Define [normalizr](https://www.npmjs.com/package/normalizr) entities from [mongoose](https://www.npmjs.com/package/mongoose) schemas!
 
 [![npm](https://img.shields.io/npm/v/mongoose-normalizr.svg?style=for-the-badge)](https://www.npmjs.com/package/mongoose-normalizr)
