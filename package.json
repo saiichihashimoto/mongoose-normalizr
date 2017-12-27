@@ -1,5 +1,11 @@
 {
   "name": "mongoose-normalizr",
+  "main": "lib",
+  "description": "Define normalizr entities from mongoose schemas",
+  "keywords": ["mongoose", "normalizr"],
+  "license": { "type": "MIT",
+     "url": "https://www.opensource.org/licenses/mit-license.php"
+    },
   "version": "0.0.0-development",
   "homepage": "http://mongoose-normalizr.com",
   "bugs": {
@@ -11,10 +17,15 @@
   },
   "scripts": {
     "commitmsg": "validate-commit-msg",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "build": "babel src --out-dir lib",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "normalizr": "^3.2.4"
+  },
+  "peerDependencies": {
+    "mongoose": "^4.13.7"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
