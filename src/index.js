@@ -1,5 +1,5 @@
+import mongoose from 'mongoose';
 import { schema } from 'normalizr';
-import { toCollectionName } from 'mongoose/lib/utils';
 
 const findRefs = (entities, resources, tree) => {
 	const obj = {};
@@ -34,7 +34,7 @@ export default (schemas) => {
 
 	for (const [modelName, resource] of Object.entries(schemas)) {
 		resources[modelName] = (resource.constructor === Object) ? { ...resource } : { schema: resource };
-		resources[modelName] = { ...resources[modelName], collection: resources[modelName].collection || toCollectionName(modelName) };
+		resources[modelName] = { ...resources[modelName], collection: resources[modelName].collection || mongoose.utils.toCollectionName(modelName) };
 	}
 
 	for (const resource of Object.values(resources)) {

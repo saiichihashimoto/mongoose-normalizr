@@ -23,7 +23,8 @@
     "build": "babel src --out-dir lib",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "start": "babel-node src"
   },
   "config": {
     "commitizen": {
