@@ -28,33 +28,38 @@ npm install --save mongoose-normalizr
 import mongoose from 'mongoose';
 import mongooseNormalizr from 'mongoose-normalizr';
 
-const FooSchema = mongoose.Schema({ fi: { type: mongoose.Schema.Types.ObjectId, ref: 'Fi' } });
-const FiSchema = mongoose.Schema({ foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }] });
+const Foo = mongoose.Schema({ fi: { type: mongoose.Schema.Types.ObjectId, ref: 'Fi' } });
+const Fi = mongoose.Schema({ foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }] });
 
-const normalizrs = mongooseNormalizr({ Foo: FooSchema, Fi: FiSchema }, { Foo: 'foos', Fi: 'fis' });
+const normalizrs = mongooseNormalizr({
+	Foo,
+	Fi: { schema: Fi, collection: 'fiis' },
+});
+
 console.log(normalizrs);
 ```
 
-### Output
+#### Output
 
 ```
 { foos:
    EntitySchema {
      ...
      schema: { fi: EntitySchema } },
-  fis:
+  fiis:
    EntitySchema {
      ...
-     schema: { foos: [ EntitySchema ] } } }
+     schema: { foos: [EntitySchema] } } }
 ```
 
 ## API
 
-### ```mongooseNormalizr(mongooseSchemas, normalizrEntityKeys)```
+### ```mongooseNormalizr(schemas)```
 
-Outputs an object mapping normalizr entity key names to the entities.
+Outputs an object mapping collection names to normalizr entities.
 
-### Arguments
+#### Arguments
 
-- ```mongooseSchemas``` *(Object)*: An object mapping mongoose model names to mongoose schemas. The keys are not the normalizr entity key names, due to mongoose using [model names in ```ref``` fields](http://mongoosejs.com/docs/api.html#query_Query-populate).
-- ```normalizrEntityKeys``` *(Object)*: An object mapping mongoose model names to normalizr entity key names. This allows the resulting entities to map to each other properly.
+- ```schemas``` *(Object)*: **required** An object whose keys are mongoose model names (**not** collection names) and values are mongoose schemas. An object can be supplied as well, with properties:
+  - ```schema``` *(mongoose.Schema)*: **required** An object mapping mongoose model names to normalizr entity key names. This allows the resulting entities to map to each other properly.
+  - ```collection``` *(String)*: A collection name to use for the normalizr entities. The default uses mongoose's `toCollectionName` utility, which basically lowercases and pluralizes the model name.

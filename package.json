@@ -1,46 +1,46 @@
 {
   "name": "mongoose-normalizr",
-  "main": "lib",
+  "version": "0.0.0-development",
   "description": "Define normalizr entities from mongoose schemas",
   "keywords": [
     "mongoose",
     "normalizr"
   ],
+  "homepage": "http://saiichihashimoto.com/mongoose-normalizr/",
+  "bugs": {
+    "url": "https://github.com/saiichihashimoto/mongoose-normalizr/issues"
+  },
   "license": {
     "type": "MIT",
     "url": "https://www.opensource.org/licenses/mit-license.php"
   },
-  "version": "0.0.0-development",
-  "homepage": "http://mongoose-normalizr.com",
-  "bugs": {
-    "url": "https://github.com/saiichihashimoto/mongoose-normalizr/issues"
-  },
+  "main": "lib",
   "repository": {
     "type": "git",
     "url": "https://github.com/saiichihashimoto/mongoose-normalizr.git"
   },
   "scripts": {
-    "commitmsg": "validate-commit-msg",
-    "precommit": "lint-staged",
     "build": "babel src --out-dir lib",
+    "precommit": "lint-staged",
+    "commitmsg": "validate-commit-msg",
     "semantic-release": "semantic-release"
   },
-  "release": {
-    "publish": [
-      "semantic-release-build",
-      "@semantic-release/npm",
-      "@semantic-release/github"
-    ]
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    },
+    "validate-commit-msg": {
+      "helpMessage": "Install commitizen and use `git cz` instead of `git commit` https://github.com/commitizen/cz-cli#installing-the-command-line-tool"
+    }
   },
   "dependencies": {
+    "mongoose": "^4.13.7",
     "normalizr": "^3.2.4"
-  },
-  "peerDependencies": {
-    "mongoose": "^4.13.7"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.0.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.13.1",
@@ -56,12 +56,11 @@
     "sort-package-json": "^1.7.1",
     "validate-commit-msg": "^2.14.0"
   },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    },
-    "validate-commit-msg": {
-      "helpMessage": "Install commitizen and use `git cz` instead of `git commit` https://github.com/commitizen/cz-cli#installing-the-command-line-tool"
-    }
+  "release": {
+    "publish": [
+      "semantic-release-build",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
   }
 }
