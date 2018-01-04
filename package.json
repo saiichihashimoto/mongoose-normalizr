@@ -31,7 +31,6 @@
       "helpMessage": "Install commitizen and use `git cz` instead of `git commit` https://github.com/commitizen/cz-cli#installing-the-command-line-tool"
     }
   },
-  "browser": "lib/index.web.js",
   "dependencies": {
     "mongoose-legacy-pluralize": "^1.0.1",
     "normalizr": "^3.2.4"
