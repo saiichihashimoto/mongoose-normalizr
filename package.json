@@ -10,10 +10,7 @@
   "bugs": {
     "url": "https://github.com/saiichihashimoto/mongoose-normalizr/issues"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://www.opensource.org/licenses/mit-license.php"
-  },
+  "license": "MIT",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
@@ -24,7 +21,7 @@
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
     "semantic-release": "semantic-release",
-    "start": "babel-node src"
+    "start": "babel-node src/test"
   },
   "config": {
     "commitizen": {
@@ -36,7 +33,7 @@
   },
   "browser": "lib/index.web.js",
   "dependencies": {
-    "mongoose": "^4.13.7",
+    "mongoose-legacy-pluralize": "^1.0.1",
     "normalizr": "^3.2.4"
   },
   "devDependencies": {
@@ -52,11 +49,15 @@
     "husky": "^0.14.3",
     "jsonlint": "github:ginman86/jsonlint",
     "lint-staged": "^6.0.0",
+    "mongoose": "*",
     "npm-run-all": "^4.1.2",
     "semantic-release": "^11.0.2",
     "semantic-release-build": "^1.1.0",
     "sort-package-json": "^1.7.1",
     "validate-commit-msg": "^2.14.0"
+  },
+  "peerDependencies": {
+    "mongoose": "*"
   },
   "release": {
     "publish": [
