@@ -3,24 +3,25 @@ import { schema } from 'normalizr';
 
 const findRefs = (entities, resources, tree) => {
 	const obj = {};
-	for (const [key, value] of Object.entries(tree)) {
-		if (value && typeof(value) !== 'object') {
+	for (const [key, subTree] of Object.entries(tree)) {
+		if (subTree && typeof(subTree) !== 'object') {
 			continue;
 		}
-		if (!value.ref) {
-			const subObj = findRefs(entities, resources, value);
+		const refAble = subTree.constructor.name === 'VirtualType' ? (subTree.options || {}) : subTree;
+		if (!refAble.ref) {
+			const subObj = findRefs(entities, resources, subTree);
 			if (!subObj) {
 				continue;
 			}
-			obj[key] = Array.isArray(value) ? [subObj[0]] : subObj;
+			obj[key] = Array.isArray(subTree) ? [subObj[0]] : subObj;
 			continue;
 		}
-		const entity = entities[resources[value.ref].collection];
+		const entity = entities[resources[refAble.ref].collection];
 		if (!entity) {
 			continue;
 		}
-		if (value.localField || value.foreignField) {
-			obj[key] = value.justOne ? entity : [entity];
+		if (refAble.localField || refAble.foreignField) {
+			obj[key] = refAble.justOne ? entity : [entity];
 			continue;
 		}
 		obj[key] = entity;
