@@ -4,15 +4,17 @@ cache:
     - ~/.npm
 notifications:
   email: false
+env:
+  - NODE_ENV=test
 node_js:
   - '9'
   - '8'
 before_script: greenkeeper-lockfile-update
 script:
-  - nyc --reporter=lcov npm test
-  - codecov
+  - npm run coverage:test
 after_script: greenkeeper-lockfile-upload
 after_success:
+  - npm run coverage:report
   - npm run semantic-release
 branches:
   except:

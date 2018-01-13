@@ -17,9 +17,6 @@ const findRefs = (entities, resources, tree) => {
 			continue;
 		}
 		const entity = entities[resources[refAble.ref].collection];
-		if (!entity) {
-			continue;
-		}
 		if (refAble.localField || refAble.foreignField) {
 			obj[key] = refAble.justOne ? entity : [entity];
 			continue;

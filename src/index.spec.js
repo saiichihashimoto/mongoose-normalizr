@@ -41,7 +41,34 @@ test('Array Ref', (assert) => {
 		Bar: mongoose.Schema(),
 	});
 
-	assert.deepEqual(normalizrs.foos.schema, { bars: [normalizrs.bars] }, 'should handle arrays');
+	assert.deepEqual(normalizrs.foos.schema, { bars: [normalizrs.bars] }, 'should traverse arrays');
+
+	assert.end();
+});
+
+test('Virtual', (assert) => {
+	const schemas = {
+		Foo: mongoose.Schema({ localId: { type: String } }),
+		Bar: mongoose.Schema({ fooId: { type: String } }),
+	};
+
+	schemas.Foo.virtual('bars', {
+		ref:          'Bar',
+		localField:   'localId',
+		foreignField: 'fooId',
+	});
+
+	schemas.Bar.virtual('foo', {
+		ref:          'Foo',
+		localField:   'fooId',
+		foreignField: 'localId',
+		justOne:      true,
+	});
+
+	const normalizrs = mongooseNormalizr(schemas);
+
+	assert.deepEqual(normalizrs.foos.schema, { bars: [normalizrs.bars] }, 'should traverse populateable virtual arrays');
+	assert.deepEqual(normalizrs.bars.schema, { foo: normalizrs.foos }, 'should traverse populateable virtual justOne');
 
 	assert.end();
 });

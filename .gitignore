@@ -58,5 +58,5 @@ typings/
 .env
 
 # custom
-coverage/
 lib/
+coverage.lcov
