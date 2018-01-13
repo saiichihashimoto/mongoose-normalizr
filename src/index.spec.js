@@ -56,6 +56,21 @@ test('Excluded Ref', (assert) => {
 	assert.end();
 });
 
+test('Sub Doc', (assert) => {
+	const BarSchema = mongoose.Schema({ nothing: mongoose.Schema() });
+
+	const normalizrs = mongooseNormalizr({
+		Foo: mongoose.Schema({ bar: BarSchema, bars: [BarSchema] }),
+		Bar: BarSchema,
+	});
+
+	assert.equal(normalizrs.foos.schema.bar, normalizrs.bars, 'should reference sub docs');
+	assert.deepEqual(normalizrs.foos.schema.bars, [normalizrs.bars], 'should traverse sub doc arrays');
+	assert.deepEqual(normalizrs.bars.schema, {}, 'should ignore unknown sub docs');
+
+	assert.end();
+});
+
 test('Virtual', (assert) => {
 	const schemas = {
 		Foo: mongoose.Schema({ localId: { type: String } }),
