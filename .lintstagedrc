@@ -1,13 +1,9 @@
 {
   "**/*.js": [
-    "eslint --fix --color",
+    "eslint --report-unused-disable-directives --fix",
     "git add"
   ],
-  "**/*.json": [
-    "jsonlint --in-place",
-    "git add"
-  ],
-  "**/.*rc": [
+  "**/{!(package|package-lock).json,.*rc}": [
     "jsonlint --in-place",
     "git add"
   ],
