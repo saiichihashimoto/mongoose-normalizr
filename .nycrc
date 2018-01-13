@@ -1,4 +1,5 @@
 {
+  "check-coverage": true,
   "watermarks": {
     "lines": [
       80,

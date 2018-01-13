@@ -20,8 +20,7 @@
     "build": "rm -rf lib && babel src --out-dir lib --ignore **/*.spec.js",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
-    "coverage:check": "nyc check-coverage",
-    "coverage:report": "nyc report --reporter=lcov | codecov",
+    "coverage:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "coverage:test": "nyc tape src/**/*.spec.js",
     "lint": "run-s --continue-on-error lint:*",
     "lint:js": "eslint --report-unused-disable-directives --fix --ignore-path .gitignore .",
@@ -30,7 +29,6 @@
     "postmerge": "npm install",
     "prepush": "npm test",
     "semantic-release": "semantic-release",
-    "start": "babel-node src/test",
     "test": "tape -r @babel/register src/**/*.spec.js"
   },
   "config": {

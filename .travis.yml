@@ -10,7 +10,6 @@ node_js:
 before_script: greenkeeper-lockfile-update
 script:
   - npm run coverage:test
-  - npm run coverage:check
 after_script: greenkeeper-lockfile-upload
 after_success:
   - npm run coverage:report
