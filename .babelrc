@@ -4,5 +4,12 @@
   ],
   "plugins": [
     "@babel/proposal-object-rest-spread"
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
 }

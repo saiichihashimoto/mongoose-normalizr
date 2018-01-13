@@ -9,10 +9,11 @@ node_js:
   - '8'
 before_script: greenkeeper-lockfile-update
 script:
-  - nyc --reporter=lcov npm test
-  - codecov
+  - npm run coverage:test
+  - npm run coverage:check
 after_script: greenkeeper-lockfile-upload
 after_success:
+  - npm run coverage:report
   - npm run semantic-release
 branches:
   except:
