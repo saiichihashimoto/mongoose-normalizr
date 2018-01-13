@@ -17,7 +17,7 @@ const findRefs = (resources, tree) => {
 			case 'VirtualType':
 				{
 					const { options } = subTree;
-					if (!options || !options.ref || !options.localField || !options.foreignField) {
+					if (!options || !options.ref || !options.localField || !options.foreignField || !resources[options.ref]) {
 						continue;
 					}
 					const { entity } = resources[options.ref];
