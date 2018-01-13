@@ -17,7 +17,7 @@
     "url": "https://github.com/saiichihashimoto/mongoose-normalizr.git"
   },
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "rm -rf lib && babel src --out-dir lib --ignore **/*.spec.js",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
     "lint": "run-s --continue-on-error lint:*",
@@ -25,8 +25,10 @@
     "lint:json": "git ls-files | grep \"\\(\\.json$\\)\\|\\(\\..*rc$\\)\" | grep -v package | xargs jsonlint --in-place",
     "lint:package": "sort-package-json",
     "postmerge": "npm install; npm run todo",
+    "prepush": "npm test",
     "semantic-release": "semantic-release",
-    "start": "babel-node src/test"
+    "start": "babel-node src/test",
+    "test": "tape -r @babel/register src/**/*.spec.js"
   },
   "config": {
     "commitizen": {
@@ -46,6 +48,7 @@
     "@babel/node": "^7.0.0-beta.37",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.37",
     "@babel/preset-env": "^7.0.0-beta.37",
+    "@babel/register": "^7.0.0-beta.37",
     "babel-eslint": "^8.2.1",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.15.0",
@@ -60,6 +63,7 @@
     "semantic-release": "^11.0.2",
     "semantic-release-build": "^1.2.0",
     "sort-package-json": "^1.7.1",
+    "tape": "^4.8.0",
     "validate-commit-msg": "^2.14.0"
   },
   "peerDependencies": {
