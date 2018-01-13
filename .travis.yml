@@ -12,10 +12,11 @@ node_js:
 before_script: greenkeeper-lockfile-update
 script:
   - npm run coverage:test
-after_script: greenkeeper-lockfile-upload
 after_success:
-  - npm run coverage:report
   - npm run semantic-release
+after_script:
+  - npm run coverage:report
+  - greenkeeper-lockfile-upload
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/

@@ -7,8 +7,24 @@ const findRefs = (entities, resources, tree) => {
 		if (subTree && typeof(subTree) !== 'object') {
 			continue;
 		}
-		const refAble = subTree.constructor.name === 'VirtualType' ? (subTree.options || {}) : subTree;
-		if (!refAble.ref) {
+		if (subTree.constructor.name === 'Schema') {
+			const resource = Object.values(resources).find((resource) => resource.schema === subTree);
+			if (!resource) {
+				continue;
+			}
+			obj[key] = entities[resource.collection];
+			continue;
+		}
+		if (subTree.constructor.name === 'VirtualType') {
+			const { options } = subTree;
+			if (!options || !options.ref || !options.localField || !options.foreignField) {
+				continue;
+			}
+			const entity = entities[resources[options.ref].collection];
+			obj[key] = options.justOne ? entity : [entity];
+			continue;
+		}
+		if (!subTree.ref) {
 			const subObj = findRefs(entities, resources, subTree);
 			if (!subObj) {
 				continue;
@@ -16,12 +32,10 @@ const findRefs = (entities, resources, tree) => {
 			obj[key] = Array.isArray(subTree) ? [subObj[0]] : subObj;
 			continue;
 		}
-		const entity = entities[resources[refAble.ref].collection];
-		if (refAble.localField || refAble.foreignField) {
-			obj[key] = refAble.justOne ? entity : [entity];
+		if (!resources[subTree.ref]) {
 			continue;
 		}
-		obj[key] = entity;
+		obj[key] = entities[resources[subTree.ref].collection];
 	}
 	return Object.keys(obj).length && obj;
 };
