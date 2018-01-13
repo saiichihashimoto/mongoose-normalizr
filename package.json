@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib --ignore **/*.spec.js",
+    "clean": "rm -rf .nyc_output coverage coverage.lcov lib",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
     "coverage:report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",

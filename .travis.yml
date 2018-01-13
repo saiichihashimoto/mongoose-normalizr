@@ -4,6 +4,8 @@ cache:
     - ~/.npm
 notifications:
   email: false
+env:
+  - NODE_ENV=test
 node_js:
   - '9'
   - '8'
