@@ -16,6 +16,9 @@ const findRefs = (entities, resources, tree) => {
 			obj[key] = Array.isArray(subTree) ? [subObj[0]] : subObj;
 			continue;
 		}
+		if (!resources[refAble.ref]) {
+			continue;
+		}
 		const entity = entities[resources[refAble.ref].collection];
 		if (refAble.localField || refAble.foreignField) {
 			obj[key] = refAble.justOne ? entity : [entity];

@@ -18,8 +18,8 @@ test('Ref', (assert) => {
 		Bar: mongoose.Schema({ foo: { type: mongoose.Schema.Types.ObjectId, ref: 'Foo' } }),
 	});
 
-	assert.deepEqual(normalizrs.foos.schema, { bar: normalizrs.bars }, 'ref should reference normalizr Entity');
-	assert.deepEqual(normalizrs.bars.schema, { foo: normalizrs.foos }, 'ref should handle cyclical references');
+	assert.deepEqual(normalizrs.foos.schema, { bar: normalizrs.bars }, 'should reference normalizr Entity');
+	assert.deepEqual(normalizrs.bars.schema, { foo: normalizrs.foos }, 'should handle cyclical references');
 
 	assert.end();
 });
@@ -42,6 +42,16 @@ test('Array Ref', (assert) => {
 	});
 
 	assert.deepEqual(normalizrs.foos.schema, { bars: [normalizrs.bars] }, 'should traverse arrays');
+
+	assert.end();
+});
+
+test('Excluded Ref', (assert) => {
+	const normalizrs = mongooseNormalizr({
+		Foo: mongoose.Schema({ bar: { type: mongoose.Schema.Types.ObjectId, ref: 'Bar' } }),
+	});
+
+	assert.deepEqual(normalizrs.foos.schema, {}, 'should ignore unknown refs');
 
 	assert.end();
 });
