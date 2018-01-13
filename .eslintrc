@@ -33,6 +33,7 @@
     "import/no-named-default": "error",
     "import/no-webpack-loader-syntax": "error",
     "import/order": "error",
+    "import/prefer-default-export": "error",
     "prefer-object-spread/prefer-object-spread": "error",
     "array-bracket-spacing": [
       "error",
@@ -49,7 +50,7 @@
     "camelcase": "error",
     "comma-dangle": [
       "error",
-      "only-multiline"
+      "always-multiline"
     ],
     "comma-style": [
       "error",
@@ -61,7 +62,13 @@
       "always"
     ],
     "eqeqeq": "error",
-    "id-length": "error",
+    "indent": [
+      "error",
+      "tab",
+      {
+        "SwitchCase": 1
+      }
+    ],
     "key-spacing": [
       "error",
       {
@@ -80,7 +87,10 @@
     "new-cap": [
       "error",
       {
-        "capIsNew": false
+        "capIsNew": false,
+        "newIsCapExceptions": [
+          "require"
+        ]
       }
     ],
     "newline-per-chained-call": "error",
@@ -105,7 +115,6 @@
       }
     ],
     "no-func-assign": "error",
-    "no-loop-func": "error",
     "no-mixed-operators": "error",
     "no-mixed-spaces-and-tabs": [
       "error",
@@ -113,6 +122,14 @@
     ],
     "no-multi-assign": "error",
     "no-multi-spaces": "error",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1,
+        "maxEOF": 0,
+        "maxBOF": 0
+      }
+    ],
     "no-nested-ternary": "error",
     "no-new-func": "error",
     "no-new-object": "error",
@@ -139,27 +156,15 @@
     ],
     "no-trailing-spaces": "error",
     "no-undef": "error",
+    "no-unexpected-multiline": "error",
     "no-unneeded-ternary": "error",
+    "no-unreachable": "error",
     "no-unused-vars": "error",
     "no-use-before-define": "error",
     "no-useless-call": "error",
     "no-useless-constructor": "error",
     "no-useless-escape": "error",
     "no-var": "error",
-    "no-warning-comments": [
-      1,
-      {
-        "terms": [
-          "FIXME",
-          "HACK",
-          "TODO",
-          "fixme",
-          "hack",
-          "todo"
-        ],
-        "location": "anywhere"
-      }
-    ],
     "no-whitespace-before-property": "error",
     "object-curly-spacing": [
       "error",
@@ -188,6 +193,7 @@
     ],
     "prefer-rest-params": "error",
     "prefer-spread": "error",
+    "prefer-template": "error",
     "quote-props": [
       "error",
       "as-needed"
@@ -225,6 +231,6 @@
       "error",
       "always"
     ],
-    "strict": "off"
+    "template-curly-spacing": "error"
   }
 }

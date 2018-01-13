@@ -20,6 +20,11 @@
     "build": "babel src --out-dir lib",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
+    "lint": "run-s --continue-on-error lint:*",
+    "lint:js": "eslint --report-unused-disable-directives --fix --ignore-path .gitignore .",
+    "lint:json": "git ls-files | grep \"\\(\\.json$\\)\\|\\(\\..*rc$\\)\" | grep -v package | xargs jsonlint --in-place",
+    "lint:package": "sort-package-json",
+    "postmerge": "npm install; npm run todo",
     "semantic-release": "semantic-release",
     "start": "babel-node src/test"
   },
@@ -36,10 +41,12 @@
     "normalizr": "^3.2.4"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "@babel/cli": "^7.0.0-beta.37",
+    "@babel/core": "^7.0.0-beta.37",
+    "@babel/node": "^7.0.0-beta.37",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.37",
+    "@babel/preset-env": "^7.0.0-beta.37",
     "babel-eslint": "^8.2.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.15.0",
     "eslint-plugin-import": "^2.8.0",
