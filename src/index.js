@@ -1,61 +1,66 @@
 import pluralize from 'mongoose-legacy-pluralize';
 import { schema } from 'normalizr';
 
-const findRefs = (entities, resources, tree) => {
+const findRefs = (resources, tree) => {
 	const obj = {};
-	for (const [key, subTree] of Object.entries(tree)) {
-		if (subTree && typeof(subTree) !== 'object') {
-			continue;
-		}
-		if (subTree.constructor.name === 'Schema') {
-			const resource = Object.values(resources).find((resource) => resource.schema === subTree);
-			if (!resource) {
+	for (const [key, subTree] of Object.entries(tree).filter(([, subTree]) => subTree && typeof(subTree) === 'object')) {
+		switch (subTree.constructor.name) {
+			case 'Schema':
+				{
+					const resource = Object.values(resources).find((resource) => resource.schema === subTree);
+					if (!resource) {
+						continue;
+					}
+					obj[key] = resource.entity;
+				}
 				continue;
-			}
-			obj[key] = entities[resource.collection];
-			continue;
-		}
-		if (subTree.constructor.name === 'VirtualType') {
-			const { options } = subTree;
-			if (!options || !options.ref || !options.localField || !options.foreignField) {
+			case 'VirtualType':
+				{
+					const { options } = subTree;
+					if (!options || !options.ref || !options.localField || !options.foreignField) {
+						continue;
+					}
+					const { entity } = resources[options.ref];
+					obj[key] = options.justOne ? entity : [entity];
+				}
 				continue;
-			}
-			const entity = entities[resources[options.ref].collection];
-			obj[key] = options.justOne ? entity : [entity];
-			continue;
-		}
-		if (!subTree.ref) {
-			const subObj = findRefs(entities, resources, subTree);
-			if (!subObj) {
+			default:
+				{
+					if (subTree.ref) {
+						if (!resources[subTree.ref]) {
+							continue;
+						}
+						obj[key] = resources[subTree.ref].entity;
+						continue;
+					}
+					const subObj = findRefs(resources, subTree);
+					if (!subObj) {
+						continue;
+					}
+					obj[key] = Array.isArray(subTree) ? [subObj[0]] : subObj;
+				}
 				continue;
-			}
-			obj[key] = Array.isArray(subTree) ? [subObj[0]] : subObj;
-			continue;
 		}
-		if (!resources[subTree.ref]) {
-			continue;
-		}
-		obj[key] = entities[resources[subTree.ref].collection];
 	}
 	return Object.keys(obj).length && obj;
 };
 
 export default (schemas) => {
 	const resources = {};
-	const entities = {};
 
 	for (const [modelName, resource] of Object.entries(schemas)) {
-		resources[modelName] = (resource.constructor === Object) ? { ...resource } : { schema: resource };
-		resources[modelName] = { ...resources[modelName], collection: resources[modelName].collection || pluralize(modelName) };
+		resources[modelName] = (resource.constructor.name === 'Schema') ? { schema: resource } : { ...resource };
+		resources[modelName].collection = resources[modelName].collection || pluralize(modelName);
+		resources[modelName].entity = resources[modelName].entity || new schema.Entity(resources[modelName].collection);
 	}
 
 	for (const resource of Object.values(resources)) {
-		entities[resource.collection] = new schema.Entity(resource.collection);
+		resource.entity.define(findRefs(resources, resource.schema.tree) || {});
 	}
 
-	for (const resource of Object.values(resources)) {
-		entities[resource.collection].define(findRefs(entities, resources, resource.schema.tree) || {});
-	}
-
-	return entities;
+	return Object.values(resources)
+		.reduce((entities, resource) => {
+			entities[resource.collection] = resource.entity;
+			return entities;
+		}, {});
 };

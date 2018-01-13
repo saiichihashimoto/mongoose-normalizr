@@ -17,7 +17,7 @@
     "url": "https://github.com/saiichihashimoto/mongoose-normalizr.git"
   },
   "scripts": {
-    "build": "rm -rf lib && babel src --out-dir lib --ignore **/*.spec.js",
+    "build": "rm -rf lib && babel src --out-dir lib --source-maps inline --ignore **/*.spec.js",
     "clean": "rm -rf .nyc_output coverage coverage.lcov lib",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
