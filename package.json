@@ -28,7 +28,7 @@
     "prepush": "npm test",
     "semantic-release": "semantic-release",
     "start": "babel-node src/test",
-    "test": "tape -r @babel/register src/**/*.spec.js"
+    "test": "tape src/**/*.spec.js -r @babel/register"
   },
   "config": {
     "commitizen": {
@@ -50,6 +50,7 @@
     "@babel/preset-env": "^7.0.0-beta.37",
     "@babel/register": "^7.0.0-beta.37",
     "babel-eslint": "^8.2.1",
+    "codecov": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.15.0",
     "eslint-plugin-import": "^2.8.0",
@@ -60,6 +61,7 @@
     "lint-staged": "^6.0.0",
     "mongoose": "^5.0.0-rc2",
     "npm-run-all": "^4.1.2",
+    "nyc": "^11.4.1",
     "semantic-release": "^11.0.2",
     "semantic-release-build": "^1.2.0",
     "sort-package-json": "^1.7.1",

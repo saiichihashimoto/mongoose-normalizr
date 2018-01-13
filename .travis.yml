@@ -10,9 +10,11 @@ node_js:
   - '6'
   - '4'
 before_install:
-  - npm install -g npm
   - npm install -g greenkeeper-lockfile@1
 before_script: greenkeeper-lockfile-update
+script:
+  - nyc --reporter=lcov npm test
+  - codecov
 after_script: greenkeeper-lockfile-upload
 after_success:
   - npm run semantic-release
