@@ -69,5 +69,5 @@ Outputs an object mapping collection names to normalizr entities.
 
 ## Caveats
 
-- Doesn't respect [dynamic references (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref). It's [on it's way](https://github.com/saiichihashimoto/mongoose-normalizr/pull/15)
+- Doesn't respect [dynamic references (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref). It's [on it's way](https://github.com/saiichihashimoto/mongoose-normalizr/pull/15).
 - Can't respect [discriminators](http://mongoosejs.com/docs/discriminators.html#the-model-discriminator-function), due to them working on mongoose Models, not Schemas. An [issue](https://github.com/Automattic/mongoose/issues/6002) is open with mongoose to fix this.
