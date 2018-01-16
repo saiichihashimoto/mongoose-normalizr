@@ -65,3 +65,9 @@ Outputs an object mapping collection names to normalizr entities.
 - ```schemas``` *(Object)*: **required** An object whose keys are mongoose model names (**not** collection names) and values are mongoose schemas. An object can be supplied as well, with properties:
   - ```schema``` *(mongoose.Schema)*: **required** An object mapping mongoose model names to normalizr entity key names. This allows the resulting entities to map to each other properly.
   - ```collection``` *(String)*: A collection name to use for the normalizr entities. The default uses [`mongoose-legacy-pluralize`](https://github.com/vkarpov15/mongoose-legacy-pluralize/blob/master/index.js), which basically lowercases and pluralizes the model name.
+
+
+## Caveats
+
+- Doesn't respect [dynamic references (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref). It's [on it's way](https://github.com/saiichihashimoto/mongoose-normalizr/pull/15)
+- Can't respect [discriminators](http://mongoosejs.com/docs/discriminators.html#the-model-discriminator-function), due to them working on mongoose Models, not Schemas. An [issue](https://github.com/Automattic/mongoose/issues/6002) is open with mongoose to fix this.
