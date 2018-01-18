@@ -26,7 +26,7 @@ Here you go!
 - Supports [Sub Docs](http://mongoosejs.com/docs/subdocs.html).
 - Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
 - Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html).
-- ~~Supports [Dynamic References (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref)~~ [*soon*](https://github.com/saiichihashimoto/mongoose-normalizr/pull/15).
+- ~~Supports [Dynamic References (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref)~~ *TODO*.
 
 ## Installation
 
