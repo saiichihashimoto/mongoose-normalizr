@@ -10,8 +10,8 @@ test('Return Value', (assert) => {
 	});
 
 	assert.deepEqual(Object.keys(normalizrs), ['foos', 'bars'], 'keys should be collection names');
-	assert.ok(Object.values(normalizrs)[0] instanceof schema.Entity, 'values should be normalizr Entities');
-	assert.ok(Object.values(normalizrs)[1] instanceof schema.Entity, 'values should be normalizr Entities');
+	assert.ok(normalizrs.foos instanceof schema.Entity, 'values should be normalizr Entities');
+	assert.ok(normalizrs.bars instanceof schema.Entity, 'values should be normalizr Entities');
 
 	assert.end();
 });
@@ -143,6 +143,7 @@ test('Discriminator', (assert) => {
 	};
 
 	assert.ok(normalizrs.foocontainers.schema.foo instanceof schema.Union, 'should return normalizr unions for discriminated');
+	assert.ok(normalizrs.foos instanceof schema.Entity, 'should return normalizr entity for returned schema, even when discriminated');
 	assert.deepEqual(normalizrs.foocontainers.schema.foo.schema, expectedUnionDefinition, 'should map to normalizr entities (except for reference: false)');
 	assert.pass('TODO Test if the schemaAttribute function uses `__t`');
 	assert.ok(normalizrs.barcontainers.schema.bar instanceof schema.Union, 'should return normalizr unions for schemas with a discriminatorKey');
