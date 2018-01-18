@@ -78,12 +78,6 @@
       }
     ],
     "keyword-spacing": "error",
-    "max-len": [
-      "error",
-      {
-        "code": 220
-      }
-    ],
     "new-cap": [
       "error",
       {

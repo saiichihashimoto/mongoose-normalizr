@@ -14,9 +14,19 @@ You use [mongoose](https://www.npmjs.com/package/mongoose) to model your API's b
 
 You use [normalizr](https://www.npmjs.com/package/normalizr) to normalize you API data on the frontend.
 
-normalizr entities represent nested data... but so do mongoose schemas! You're don't want to [repeat yourself](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) and want to generate your normalizr entities directly from the mongoose schemas.
+normalizr entities represent nested data... but so do mongoose schemas! You're don't want to [repeat yourself](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). You want to generate normalizr entities directly from your mongoose schemas.
 
-Cool!
+Here you go!
+
+## Features
+
+- Define normalizr entities from mongoose schemas!
+- Built specifically for the browser! *Works server-side, as well.*
+- Traverses arrays and objects to find deep references.
+- Supports [Sub Docs](http://mongoosejs.com/docs/subdocs.html).
+- Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
+- Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html).
+- ~~Supports [Dynamic References (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref)~~ *TODO*.
 
 ## Installation
 
@@ -29,6 +39,7 @@ npm install --save mongoose-normalizr
 ```javascript
 import mongoose from 'mongoose';
 import mongooseNormalizr from 'mongoose-normalizr';
+import { normalize } from 'normalizr';
 
 const Foo = mongoose.Schema({ fi: { type: mongoose.Schema.Types.ObjectId, ref: 'Fi' } });
 const Fi = mongoose.Schema({ foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }] });
@@ -38,13 +49,15 @@ const normalizrs = mongooseNormalizr({
 	Fi: { schema: Fi, collection: 'fiis' },
 });
 
-console.log(normalizrs);
+console.log('normalizrs:', normalizrs);
+
+console.log('normalized:', normalize({ id: 'fi1', foos: [{ id: 'foo1' }, { id: 'foo2', fi: { id: 'fi2' } }] }, normalizrs.fiis));
 ```
 
 #### Output
 
 ```
-{ foos:
+normalizrs: { foos:
    EntitySchema {
      ...
      schema: { fi: EntitySchema } },
@@ -52,22 +65,50 @@ console.log(normalizrs);
    EntitySchema {
      ...
      schema: { foos: [EntitySchema] } } }
+
+
+normalized: {
+    "result": "fi1",
+    "entities": {
+        "foos": {
+            "foo1": {
+                "id": "foo1"
+            },
+            "foo2": {
+                "id": "foo2",
+                "fi": "fi2"
+            }
+        },
+        "fiis": {
+            "fi2": {
+                "id": "fi2"
+            },
+            "fi1": {
+                "id": "fi1",
+                "foos": [
+                    "foo1",
+                    "foo2"
+                ]
+            }
+        }
+    }
+}
 ```
 
 ## API
 
 ### ```mongooseNormalizr(schemas)```
 
-Outputs an object mapping collection names to normalizr entities.
+Returns an object mapping collection names to normalizr entities.
 
 #### Arguments
 
-- ```schemas``` *(Object)*: **required** An object whose keys are mongoose model names (**not** collection names) and values are mongoose schemas. An object can be supplied as well, with properties:
-  - ```schema``` *(mongoose.Schema)*: **required** An object mapping mongoose model names to normalizr entity key names. This allows the resulting entities to map to each other properly.
-  - ```collection``` *(String)*: A collection name to use for the normalizr entities. The default uses [`mongoose-legacy-pluralize`](https://github.com/vkarpov15/mongoose-legacy-pluralize/blob/master/index.js), which basically lowercases and pluralizes the model name.
+- ```schemas```: **required**: An object mapping mongoose model names (**not** collection names) to mongoose schemas. Instead of a mongoose schema, an object with the following properties may be supplied:
+  - ```schema```: **required** The mongoose schema to use.
+  - ```collection```: A collection name to use for the normalizr entities. Defaults to [`pluralize(modelName)`](https://github.com/vkarpov15/mongoose-legacy-pluralize).
+  - ```enable```: Shorthand for `define`, `reference`, & `discriminate` (partially). Defaults to `true`.
+  - ```define```: If `false`, produces an empty normalizr entity and doesn't follow any references. Defaults to value of `enable`.
+  - ```reference```: If `false`, other produced entities will ignore references to this entity. Defaults to value of `enable`.
+  - ```discriminate```: If `true`, references to the schema will produce normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute) using `discriminatorKey || '__t'`. *Unions don't [normalize to just an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.* Defaults to `true` if `enable` and the schema was explicitly given a `discriminatorKey`.
 
-
-## Caveats
-
-- Doesn't respect [dynamic references (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref). It's [on it's way](https://github.com/saiichihashimoto/mongoose-normalizr/pull/15).
-- Can't respect [discriminators](http://mongoosejs.com/docs/discriminators.html#the-model-discriminator-function), due to them working on mongoose Models, not Schemas. An [issue](https://github.com/Automattic/mongoose/issues/6002) is open with mongoose to fix this.
+See [our tests](https://github.com/saiichihashimoto/mongoose-normalizr/blob/master/src/index.spec.js) for examples!

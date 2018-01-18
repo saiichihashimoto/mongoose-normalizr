@@ -1,61 +1,91 @@
 import pluralize from 'mongoose-legacy-pluralize';
 import { schema } from 'normalizr';
 
-const findRefs = (entities, resources, tree) => {
+const { Entity, Union } = schema;
+
+const getEntityFromResource = ({ reference, entity, discriminate } = {}, entityReference) => reference && (discriminate ? new Union(entityReference, (entity.options && entity.options.discriminatorKey) || '__t') : entity);
+
+const findRefs = (resources, tree, entityReference) => {
 	const obj = {};
-	for (const [key, subTree] of Object.entries(tree)) {
-		if (subTree && typeof(subTree) !== 'object') {
-			continue;
+	for (const [key, subTree] of Object.entries(tree).filter(([, subTree]) => subTree && typeof(subTree) === 'object')) {
+		switch (subTree.constructor.name) {
+			case 'Schema':
+				{
+					const entity = getEntityFromResource(Object.values(resources).find(({ schema }) => schema === subTree), entityReference);
+					if (!entity) {
+						continue;
+					}
+					obj[key] = entity;
+				}
+				break;
+			case 'VirtualType':
+				{
+					const { options: { ref, localField, foreignField, justOne } = {} } = subTree;
+					if (!ref || !localField || !foreignField) {
+						continue;
+					}
+					const entity = getEntityFromResource(resources[ref], entityReference);
+					if (!entity) {
+						continue;
+					}
+					obj[key] = justOne ? entity : [entity];
+				}
+				break;
+			default:
+				{
+					if (subTree.ref) {
+						const entity = getEntityFromResource(resources[subTree.ref], entityReference);
+						if (!entity) {
+							continue;
+						}
+						obj[key] = entity;
+						continue;
+					}
+					const subObj = findRefs(resources, subTree, entityReference);
+					if (!subObj) {
+						continue;
+					}
+					obj[key] = Array.isArray(subTree) ? [subObj[0]] : subObj;
+				}
+				break;
 		}
-		if (subTree.constructor.name === 'Schema') {
-			const resource = Object.values(resources).find((resource) => resource.schema === subTree);
-			if (!resource) {
-				continue;
-			}
-			obj[key] = entities[resource.collection];
-			continue;
-		}
-		if (subTree.constructor.name === 'VirtualType') {
-			const { options } = subTree;
-			if (!options || !options.ref || !options.localField || !options.foreignField) {
-				continue;
-			}
-			const entity = entities[resources[options.ref].collection];
-			obj[key] = options.justOne ? entity : [entity];
-			continue;
-		}
-		if (!subTree.ref) {
-			const subObj = findRefs(entities, resources, subTree);
-			if (!subObj) {
-				continue;
-			}
-			obj[key] = Array.isArray(subTree) ? [subObj[0]] : subObj;
-			continue;
-		}
-		if (!resources[subTree.ref]) {
-			continue;
-		}
-		obj[key] = entities[resources[subTree.ref].collection];
 	}
 	return Object.keys(obj).length && obj;
 };
 
 export default (schemas) => {
-	const resources = {};
-	const entities = {};
+	const resources = Object.entries(schemas)
+		.reduce((resources, [modelName, resource]) => {
+			resources[modelName] = {
+				collection: pluralize(modelName),
+				enable:     true,
+				...((resource.constructor.name === 'Schema') ? { schema: resource } : { ...resource }),
+			};
+			resources[modelName] = {
+				entity:       new Entity(resources[modelName].collection),
+				define:       resources[modelName].enable,
+				reference:    resources[modelName].enable,
+				discriminate: resources[modelName].enable && resources[modelName].schema._userProvidedOptions && resources[modelName].schema._userProvidedOptions.discriminatorKey,
+				...resources[modelName],
+			};
+			return resources;
+		}, {});
 
-	for (const [modelName, resource] of Object.entries(schemas)) {
-		resources[modelName] = (resource.constructor === Object) ? { ...resource } : { schema: resource };
-		resources[modelName] = { ...resources[modelName], collection: resources[modelName].collection || pluralize(modelName) };
+	const entityReference = Object.entries(resources)
+		.reduce((entityReference, [modelName, { entity, reference }]) => {
+			if (reference) {
+				entityReference[modelName] = entity;
+			}
+			return entityReference;
+		}, {});
+
+	for (const { entity, schema: { tree } } of Object.values(resources).filter(({ define }) => define)) {
+		entity.define(findRefs(resources, tree, entityReference) || {});
 	}
 
-	for (const resource of Object.values(resources)) {
-		entities[resource.collection] = new schema.Entity(resource.collection);
-	}
-
-	for (const resource of Object.values(resources)) {
-		entities[resource.collection].define(findRefs(entities, resources, resource.schema.tree) || {});
-	}
-
-	return entities;
+	return Object.values(resources)
+		.reduce((entities, { collection, entity }) => {
+			entities[collection] = entity;
+			return entities;
+		}, {});
 };
