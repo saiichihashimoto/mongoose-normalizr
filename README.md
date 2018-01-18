@@ -39,6 +39,7 @@ npm install --save mongoose-normalizr
 ```javascript
 import mongoose from 'mongoose';
 import mongooseNormalizr from 'mongoose-normalizr';
+import { normalize } from 'normalizr';
 
 const Foo = mongoose.Schema({ fi: { type: mongoose.Schema.Types.ObjectId, ref: 'Fi' } });
 const Fi = mongoose.Schema({ foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }] });
@@ -48,13 +49,15 @@ const normalizrs = mongooseNormalizr({
 	Fi: { schema: Fi, collection: 'fiis' },
 });
 
-console.log(normalizrs);
+console.log('normalizrs:', normalizrs);
+
+console.log('normalized:', normalize({ id: 'fi1', foos: [{ id: 'foo1' }, { id: 'foo2', fi: { id: 'fi2' } }] }, normalizrs.fiis));
 ```
 
 #### Output
 
 ```
-{ foos:
+normalizrs: { foos:
    EntitySchema {
      ...
      schema: { fi: EntitySchema } },
@@ -62,6 +65,34 @@ console.log(normalizrs);
    EntitySchema {
      ...
      schema: { foos: [EntitySchema] } } }
+
+
+normalized: {
+    "result": "fi1",
+    "entities": {
+        "foos": {
+            "foo1": {
+                "id": "foo1"
+            },
+            "foo2": {
+                "id": "foo2",
+                "fi": "fi2"
+            }
+        },
+        "fiis": {
+            "fi2": {
+                "id": "fi2"
+            },
+            "fi1": {
+                "id": "fi1",
+                "foos": [
+                    "foo1",
+                    "foo2"
+                ]
+            }
+        }
+    }
+}
 ```
 
 ## API

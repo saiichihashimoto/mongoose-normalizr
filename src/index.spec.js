@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import test from 'tape';
+import { schema } from 'normalizr';
 import mongooseNormalizr from '.';
 
 test('Return Value', (assert) => {
@@ -9,7 +10,8 @@ test('Return Value', (assert) => {
 	});
 
 	assert.deepEqual(Object.keys(normalizrs), ['foos', 'bars'], 'keys should be collection names');
-	assert.deepEqual(Object.values(normalizrs).map((obj) => obj.constructor.name), ['EntitySchema', 'EntitySchema'], 'values should be normalizr Entities');
+	assert.ok(Object.values(normalizrs)[0] instanceof schema.Entity, 'values should be normalizr Entities');
+	assert.ok(Object.values(normalizrs)[1] instanceof schema.Entity, 'values should be normalizr Entities');
 
 	assert.end();
 });
@@ -140,13 +142,13 @@ test('Discriminator', (assert) => {
 		AnotherContainer: normalizrs.anothercontainers,
 	};
 
-	assert.equal(normalizrs.foocontainers.schema.foo.constructor.name, 'UnionSchema', 'should return normalizr unions for discriminated');
+	assert.ok(normalizrs.foocontainers.schema.foo instanceof schema.Union, 'should return normalizr unions for discriminated');
 	assert.deepEqual(normalizrs.foocontainers.schema.foo.schema, expectedUnionDefinition, 'should map to normalizr entities (except for reference: false)');
 	assert.pass('TODO Test if the schemaAttribute function uses `__t`');
-	assert.equal(normalizrs.barcontainers.schema.bar.constructor.name, 'UnionSchema', 'should return normalizr unions for schemas with a discriminatorKey');
+	assert.ok(normalizrs.barcontainers.schema.bar instanceof schema.Union, 'should return normalizr unions for schemas with a discriminatorKey');
 	assert.deepEqual(normalizrs.barcontainers.schema.bar.schema, expectedUnionDefinition, 'should map to normalizr entities (except for reference: false)');
 	assert.pass('TODO Test if the schemaAttribute function uses `kind`');
-	assert.equal(normalizrs.othercontainers.schema.other, normalizrs.others, 'should not return normalizr unions for discriminate: false despite discriminatorKey');
+	assert.ok(normalizrs.othercontainers.schema.other instanceof schema.Entity, 'should not return normalizr unions for discriminate: false despite discriminatorKey');
 	assert.deepEqual(normalizrs.anothercontainers.schema, {}, 'should not return normalizr unions for enable: false despite discriminatorKey');
 
 	assert.end();
