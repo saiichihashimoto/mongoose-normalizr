@@ -21,7 +21,7 @@ Cool!
 ## Features
 
 - Transforms mongoose schemas with references into normalizr entities!
-- Supports the Browser! *Actually, it's specifically made for the browser use-case!*
+- Built specifically for the browser! *Works server-side, as well.*
 - Traverses arrays and objects to find deep references.
 - Supports [Sub Docs](http://mongoosejs.com/docs/subdocs.html).
 - Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
