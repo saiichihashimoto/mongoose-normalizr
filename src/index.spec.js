@@ -104,3 +104,50 @@ test('Virtual', (assert) => {
 
 	assert.end();
 });
+
+test('Discriminator', (assert) => {
+	const normalizrs = mongooseNormalizr({
+		Foo:              { discriminate: true, schema: mongoose.Schema({ key: { type: String } }) },
+		SpecialFoo:       mongoose.Schema({ key2: { type: String } }),
+		FooContainer:     mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+		Bar:              mongoose.Schema({ key: { type: String } }, { discriminatorKey: 'kind' }),
+		SpecialBar:       mongoose.Schema({ key2: { type: String } }),
+		BarContainer:     mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+		Other:            { discriminate: false, schema: mongoose.Schema({ key: { type: String } }, { discriminatorKey: 'kind' }) },
+		SpecialOther:     mongoose.Schema({ key2: { type: String } }),
+		OtherContainer:   mongoose.Schema({ other: { ref: 'Other', type: mongoose.Schema.Types.ObjectId } }),
+		Another:          { enable: false, schema: mongoose.Schema({ key: { type: String } }, { discriminatorKey: 'category' }) },
+		SpecialAnother:   mongoose.Schema({ key2: { type: String } }),
+		AnotherContainer: mongoose.Schema({ another: { ref: 'Another', type: mongoose.Schema.Types.ObjectId } }),
+	});
+
+	const expectedUnionDefinition = {
+		Foo:              normalizrs.foos,
+		SpecialFoo:       normalizrs.specialfoos,
+		FooContainer:     normalizrs.foocontainers,
+		Bar:              normalizrs.bars,
+		SpecialBar:       normalizrs.specialbars,
+		BarContainer:     normalizrs.barcontainers,
+		Other:            normalizrs.others,
+		SpecialOther:     normalizrs.specialothers,
+		OtherContainer:   normalizrs.othercontainers,
+		/*
+		 * Another isn't included because reference: false aren't referenced and enable: false does that
+		 *
+		 * Another:          normalizrs.anothers,
+		 */
+		SpecialAnother:   normalizrs.specialanothers,
+		AnotherContainer: normalizrs.anothercontainers,
+	};
+
+	assert.equal(normalizrs.foocontainers.schema.foo.constructor.name, 'UnionSchema', 'should return normalizr unions for discriminated');
+	assert.deepEqual(normalizrs.foocontainers.schema.foo.schema, expectedUnionDefinition, 'should map to normalizr entities (except for reference: false)');
+	assert.pass('TODO Test if the schemaAttribute function uses `__t`');
+	assert.equal(normalizrs.barcontainers.schema.bar.constructor.name, 'UnionSchema', 'should return normalizr unions for schemas with a discriminatorKey');
+	assert.deepEqual(normalizrs.barcontainers.schema.bar.schema, expectedUnionDefinition, 'should map to normalizr entities (except for reference: false)');
+	assert.pass('TODO Test if the schemaAttribute function uses `kind`');
+	assert.equal(normalizrs.othercontainers.schema.other, normalizrs.others, 'should not return normalizr unions for discriminate: false despite discriminatorKey');
+	assert.deepEqual(normalizrs.anothercontainers.schema, {}, 'should not return normalizr unions for enable: false despite discriminatorKey');
+
+	assert.end();
+});

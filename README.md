@@ -18,6 +18,16 @@ normalizr entities represent nested data... but so do mongoose schemas! You're d
 
 Cool!
 
+## Features
+
+- Transforms mongoose schemas with references into normalizr entities!
+- Supports the Browser! *Actually, it's specifically made for the browser use-case!*
+- Traverses arrays and objects to find deep references.
+- Supports [Sub Docs](http://mongoosejs.com/docs/subdocs.html).
+- Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
+- Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html).
+- ~~Supports [Dynamic References (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref)~~ [*soon*](https://github.com/saiichihashimoto/mongoose-normalizr/pull/15).
+
 ## Installation
 
 ```bash
@@ -54,13 +64,6 @@ console.log(normalizrs);
      schema: { foos: [EntitySchema] } } }
 ```
 
-## Features
-
-- Traverses arrays and objects to find references.
-- Supports [Sub Docs](http://mongoosejs.com/docs/subdocs.html).
-- Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
-- Supports [Dynamic References (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref).
-
 ## API
 
 ### ```mongooseNormalizr(schemas)```
@@ -72,11 +75,9 @@ Returns an object mapping collection names to normalizr entities.
 - ```schemas```: **required**: An object mapping mongoose model names (**not** collection names) to mongoose schemas. Instead of a mongoose schema, an object with the following properties may be supplied:
   - ```schema```: **required** The mongoose schema to use.
   - ```collection```: A collection name to use for the normalizr entities. Defaults to [`pluralize(modelName)`](https://github.com/vkarpov15/mongoose-legacy-pluralize).
-  - ```enable```: Shorthand for `define` & `reference`. Defaults to `true`.
+  - ```enable```: Shorthand for `define`, `reference`, & `discriminate` (partially). Defaults to `true`.
   - ```define```: If `false`, produces an empty normalizr entity and doesn't follow any references. Defaults to value of `enable`.
   - ```reference```: If `false`, other produced entities will ignore references to this entity. Defaults to value of `enable`.
+  - ```discriminate```: If `true`, references to the schema will produce normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute) using `discriminatorKey || '\_\_t'`. *Unions don't [normalize to just an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.* Defaults to `true` if `enable` and the schema was explicitly given a `discriminatorKey`.
 
-
-## Caveats
-
-- Can't respect [discriminators](http://mongoosejs.com/docs/discriminators.html#the-model-discriminator-function), due to them working on mongoose Models, not Schemas. An [issue](https://github.com/Automattic/mongoose/issues/6002) is open with mongoose to fix this.
+See [our tests](https://github.com/saiichihashimoto/mongoose-normalizr/blob/master/src/index.spec.js) for examples!
