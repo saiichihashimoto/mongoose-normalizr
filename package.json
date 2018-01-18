@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib --source-maps inline --ignore **/*.spec.js",
+    "postcheckout": "if [ $(echo $GIT_PARAMS | awk '{print $3}') = \"1\" ] && [ $(echo $GIT_PARAMS | awk '{print $1}') != $(echo $GIT_PARAMS | awk '{print $2}') ]; echo WARNING!!! npm is currently having issues with removing installed packages, so run \"npm install\" https://github.com/npm/npm/issues/18491; fi;",
     "clean": "rm -rf .nyc_output coverage coverage.lcov lib",
     "precommit": "lint-staged",
     "commitmsg": "validate-commit-msg",
@@ -27,7 +28,7 @@
     "lint:js": "eslint --report-unused-disable-directives --fix --ignore-path .gitignore .",
     "lint:json": "git ls-files | grep \"\\(\\.json$\\)\\|\\(\\..*rc$\\)\" | grep -v package | xargs jsonlint --in-place",
     "lint:package": "sort-package-json",
-    "postmerge": "npm install",
+    "postmerge": "echo WARNING!!! npm is currently having issues with removing installed packages, so run \"npm install\" https://github.com/npm/npm/issues/18491",
     "prepush": "npm test",
     "semantic-release": "semantic-release",
     "test": "tape -r @babel/register src/**/*.spec.js"
