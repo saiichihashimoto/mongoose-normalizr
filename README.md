@@ -65,13 +65,16 @@ console.log(normalizrs);
 
 ### ```mongooseNormalizr(schemas)```
 
-Outputs an object mapping collection names to normalizr entities.
+Returns an object mapping collection names to normalizr entities.
 
 #### Arguments
 
-- ```schemas``` *(Object)*: **required** An object whose keys are mongoose model names (**not** collection names) and values are mongoose schemas. An object can be supplied as well, with properties:
-  - ```schema``` *(mongoose.Schema)*: **required** An object mapping mongoose model names to normalizr entity key names. This allows the resulting entities to map to each other properly.
-  - ```collection``` *(String)*: A collection name to use for the normalizr entities. The default uses [`mongoose-legacy-pluralize`](https://github.com/vkarpov15/mongoose-legacy-pluralize/blob/master/index.js), which basically lowercases and pluralizes the model name.
+- ```schemas```: **required**: An object mapping mongoose model names (**not** collection names) to mongoose schemas. Instead of a mongoose schema, an object with the following properties may be supplied:
+  - ```schema```: **required** The mongoose schema to use.
+  - ```collection```: A collection name to use for the normalizr entities. Defaults to [`pluralize(modelName)`](https://github.com/vkarpov15/mongoose-legacy-pluralize).
+  - ```enable```: Shorthand for `define` & `reference`. Defaults to `true`.
+  - ```define```: If `false`, produces an empty normalizr entity and doesn't follow any references. Defaults to value of `enable`.
+  - ```reference```: If `false`, other produced entities will ignore references to this entity. Defaults to value of `enable`.
 
 
 ## Caveats

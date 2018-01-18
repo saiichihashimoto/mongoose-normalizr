@@ -16,8 +16,8 @@ test('Return Value', (assert) => {
 
 test('Ref', (assert) => {
 	const normalizrs = mongooseNormalizr({
-		Foo: mongoose.Schema({ bar: { type: mongoose.Schema.Types.ObjectId, ref: 'Bar' } }),
-		Bar: mongoose.Schema({ foo: { type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }, other: { type: mongoose.Schema.Types.ObjectId, ref: 'Other' } }),
+		Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+		Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId }, other: { ref: 'Other', type: mongoose.Schema.Types.ObjectId } }),
 	});
 
 	assert.deepEqual(normalizrs.foos.schema, { bar: normalizrs.bars }, 'should handle refs');
@@ -27,10 +27,26 @@ test('Ref', (assert) => {
 	assert.end();
 });
 
-test('Traversal', (assert) => {
+test('Disable', (assert) => {
 	const normalizrs = mongooseNormalizr({
-		Foo: mongoose.Schema({ child: { grandchild: { bar: { type: mongoose.Schema.Types.ObjectId, ref: 'Bar' } } } }),
-		Bar: mongoose.Schema({ foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }] }),
+		Foo:        mongoose.Schema({ ignore: { ref: 'Ignore', type: mongoose.Schema.Types.ObjectId }, disable: { ref: 'Disable', type: mongoose.Schema.Types.ObjectId } }),
+		DontDefine: { define: false, schema: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }) },
+		Ignore:     { reference: false, schema: mongoose.Schema({ }) },
+		Disable:    { enable: false, schema: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }) },
+	});
+
+	assert.deepEqual(Object.keys(normalizrs), ['foos', 'dontdefines', 'ignores', 'disables'], 'should return entities for define: false, reference: false, enable: false');
+	assert.deepEqual(Object.keys(normalizrs.dontdefines.schema), [], 'should have empty refs for define: false');
+	assert.deepEqual(Object.keys(normalizrs.disables.schema), [], 'should have empty refs for enable: false');
+	assert.deepEqual(Object.keys(normalizrs.foos.schema), [], 'shouldn\'t be referenced when reference: false or enable: false');
+
+	assert.end();
+});
+
+test('Traverse', (assert) => {
+	const normalizrs = mongooseNormalizr({
+		Foo: mongoose.Schema({ child: { grandchild: { bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } } } }),
+		Bar: mongoose.Schema({ foos: [{ ref: 'Foo', type: mongoose.Schema.Types.ObjectId }] }),
 	});
 
 	assert.deepEqual(normalizrs.foos.schema, { child: { grandchild: { bar: normalizrs.bars } } }, 'should traverse objects');
