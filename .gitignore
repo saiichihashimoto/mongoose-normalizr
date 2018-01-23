@@ -60,3 +60,4 @@ typings/
 # custom
 lib/
 coverage.lcov
+.DS_Store
