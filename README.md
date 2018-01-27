@@ -5,6 +5,7 @@ Define [normalizr](https://www.npmjs.com/package/normalizr) entities from [mongo
 [![npm](https://img.shields.io/npm/v/mongoose-normalizr.svg)](https://www.npmjs.com/package/mongoose-normalizr)
 [![Travis](https://img.shields.io/travis/saiichihashimoto/mongoose-normalizr/master.svg)](https://travis-ci.org/saiichihashimoto/mongoose-normalizr)
 [![Codecov](https://img.shields.io/codecov/c/github/saiichihashimoto/mongoose-normalizr/master.svg)](https://codecov.io/gh/saiichihashimoto/mongoose-normalizr)
+[![NSP Status](https://nodesecurity.io/orgs/saiichihashimoto/projects/5c64880b-6dba-4efe-9908-e848f96999f0/badge)](https://nodesecurity.io/orgs/saiichihashimoto/projects/5c64880b-6dba-4efe-9908-e848f96999f0)
 [![Gitter](https://badges.gitter.im/mongoose-normalizr/Lobby.svg)](https://gitter.im/mongoose-normalizr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 [![Greenkeeper badge](https://badges.greenkeeper.io/saiichihashimoto/mongoose-normalizr.svg)](https://greenkeeper.io/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
