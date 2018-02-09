@@ -1,4 +1,5 @@
 import pluralize from 'mongoose-legacy-pluralize';
+import { Schema, VirtualType } from 'mongoose';
 import { schema } from 'normalizr';
 
 const { Entity, Union } = schema;
@@ -8,8 +9,8 @@ const getEntityFromResource = ({ reference, entity, discriminate } = {}, entityR
 const findRefs = (resources, tree, entityReference) => {
 	const obj = {};
 	for (const [key, subTree] of Object.entries(tree).filter(([, subTree]) => subTree && typeof(subTree) === 'object')) {
-		switch (subTree.constructor.name) {
-			case 'Schema':
+		switch (subTree.constructor) {
+			case Schema:
 				{
 					const entity = getEntityFromResource(Object.values(resources).find(({ schema }) => schema === subTree), entityReference);
 					if (!entity) {
@@ -18,7 +19,7 @@ const findRefs = (resources, tree, entityReference) => {
 					obj[key] = entity;
 				}
 				break;
-			case 'VirtualType':
+			case VirtualType:
 				{
 					const { options: { ref, localField, foreignField, justOne } = {} } = subTree;
 					if (!ref || !localField || !foreignField) {
@@ -59,7 +60,7 @@ export default (schemas) => {
 			resources[modelName] = {
 				collection: pluralize(modelName),
 				enable:     true,
-				...((resource.constructor.name === 'Schema') ? { schema: resource } : { ...resource }),
+				...((resource.constructor === Schema) ? { schema: resource } : { ...resource }),
 			};
 			resources[modelName] = {
 				entity:       new Entity(resources[modelName].collection),
