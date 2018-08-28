@@ -50,7 +50,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.44",
     "@babel/preset-env": "^7.0.0-beta.44",
     "@babel/register": "^7.0.0-beta.44",
-    "babel-eslint": "^8.2.5",
+    "babel-eslint": "^9.0.0",
     "babel-plugin-istanbul": "^4.1.6",
     "codecov": "^3.0.2",
     "cross-env": "^5.2.0",
