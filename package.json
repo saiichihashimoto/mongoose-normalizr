@@ -6,7 +6,7 @@
     "mongoose",
     "normalizr"
   ],
-  "homepage": "http://saiichihashimoto.com/mongoose-normalizr/",
+  "homepage": "https://saiichihashimoto.github.io/mongoose-normalizr/",
   "bugs": {
     "url": "https://github.com/saiichihashimoto/mongoose-normalizr/issues"
   },

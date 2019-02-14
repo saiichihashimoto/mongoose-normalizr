@@ -4,10 +4,12 @@ import { schema as normalizr } from 'normalizr';
 
 const { Entity, Union } = normalizr;
 
-function getEntityFromResource({ reference, entity, discriminate } = {}, entityReference) {
+function getEntityFromResource({ reference, entity, discriminate, schema } = {}, entityReference) {
+	const { _userProvidedOptions: { discriminatorKey } = {} } = schema || {};
+
 	return reference && (
-		discriminate ?
-			new Union(entityReference, (entity.options && entity.options.discriminatorKey) || '__t') :
+		(discriminate || (discriminate !== false && discriminatorKey)) ?
+			new Union(entityReference, discriminatorKey || '__t') :
 			entity
 	);
 }
@@ -63,40 +65,35 @@ function findRefs(resources, tree, entityReference) {
 export default (schemas) => {
 	const resources = Object.entries(schemas)
 		.reduce((acc, [modelName, resource]) => {
-			acc[modelName] = {
-				collection: pluralize(modelName),
-				enable:     true,
-				...((resource.constructor === Schema) ? { schema: resource } : { ...resource }),
-			};
+			const options = (resource.constructor === Schema) ?
+				{ schema: resource } :
+				resource;
 
 			const {
-				collection,
-				enable,
-				schema: {
-					_userProvidedOptions: {
-						discriminatorKey,
-					} = {},
-				},
-			} = acc[modelName];
+				collection = pluralize(modelName),
+				enable = true,
+				define = true,
+				reference = true,
+				schema,
+				discriminate,
+			} = options;
 
 			acc[modelName] = {
+				collection,
+				schema,
 				entity:       new Entity(collection),
-				define:       enable,
-				reference:    enable,
-				discriminate: enable && discriminatorKey,
-				...acc[modelName],
+				define:       enable && define,
+				reference:    enable && reference,
+				discriminate: enable && discriminate,
 			};
 
 			return acc;
 		}, {});
 
 	const entityReference = Object.entries(resources)
-		.reduce((acc, [modelName, { entity, reference }]) => {
-			if (reference) {
-				acc[modelName] = entity;
-			}
-			return acc;
-		}, {});
+		.reduce((acc, [modelName, { entity, reference }]) => (
+			reference ? { ...acc, [modelName]: entity } : acc
+		), {});
 
 	Object.values(resources)
 		.filter(({ define }) => define)
