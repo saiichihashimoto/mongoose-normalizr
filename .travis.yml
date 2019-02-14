@@ -1,24 +1,14 @@
 language: node_js
-cache:
-  directories:
-    - ~/.npm
-notifications:
-  email: false
 node_js:
-  - '9'
-  - '8'
-  - '10'
-before_install:
-  - npm install -g greenkeeper-lockfile@1
-before_script:
-  - greenkeeper-lockfile-update
-script:
-  - npm run coverage:test
+  - 11
 after_success:
-  - npm run semantic-release
-after_script:
-  - npm run coverage:report
-  - greenkeeper-lockfile-upload
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
+  - npx codecov
+jobs:
+  include:
+    - stage: release
+      node_js: lts/*
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npm run build && npx semantic-release

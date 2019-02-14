@@ -1,13 +1,8 @@
-# mongoose-normalizr
-
 Define [normalizr](https://www.npmjs.com/package/normalizr) entities from [mongoose](https://www.npmjs.com/package/mongoose) schemas!
 
-[![npm](https://img.shields.io/npm/v/mongoose-normalizr.svg)](https://www.npmjs.com/package/mongoose-normalizr)
-[![Travis](https://img.shields.io/travis/saiichihashimoto/mongoose-normalizr/master.svg)](https://travis-ci.org/saiichihashimoto/mongoose-normalizr)
-[![Codecov](https://img.shields.io/codecov/c/github/saiichihashimoto/mongoose-normalizr/master.svg)](https://codecov.io/gh/saiichihashimoto/mongoose-normalizr)
-[![NSP Status](https://nodesecurity.io/orgs/saiichihashimoto/projects/5c64880b-6dba-4efe-9908-e848f96999f0/badge)](https://nodesecurity.io/orgs/saiichihashimoto/projects/5c64880b-6dba-4efe-9908-e848f96999f0)
-[![Gitter](https://badges.gitter.im/mongoose-normalizr/Lobby.svg)](https://gitter.im/mongoose-normalizr/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
-[![Greenkeeper badge](https://badges.greenkeeper.io/saiichihashimoto/mongoose-normalizr.svg)](https://greenkeeper.io/)
+[![current version](https://img.shields.io/npm/v/mongoose-normalizr.svg)](https://www.npmjs.com/package/mongoose-normalizr)
+[![Build Status](https://travis-ci.org/saiichihashimoto/mongoose-normalizr.svg?branch=master)](https://travis-ci.org/saiichihashimoto/mongoose-normalizr)
+[![codecov](https://codecov.io/gh/saiichihashimoto/mongoose-normalizr/branch/master/graph/badge.svg)](https://codecov.io/gh/saiichihashimoto/mongoose-normalizr)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
@@ -104,12 +99,12 @@ Returns an object mapping collection names to normalizr entities.
 
 #### Arguments
 
-- ```schemas```: **required**: An object mapping mongoose model names (**not** collection names) to mongoose schemas. Instead of a mongoose schema, an object with the following properties may be supplied:
+- ```schemas```: **required**: An object mapping mongoose model names (**not** collection names) to mongoose schemas. Instead of a mongoose schema, you may supply an object with the following properties:
   - ```schema```: **required** The mongoose schema to use.
   - ```collection```: A collection name to use for the normalizr entities. Defaults to [`pluralize(modelName)`](https://github.com/vkarpov15/mongoose-legacy-pluralize).
   - ```enable```: Shorthand for `define`, `reference`, & `discriminate` (partially). Defaults to `true`.
   - ```define```: If `false`, produces an empty normalizr entity and doesn't follow any references. Defaults to value of `enable`.
   - ```reference```: If `false`, other produced entities will ignore references to this entity. Defaults to value of `enable`.
-  - ```discriminate```: If `true`, references to the schema will produce normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute) using `discriminatorKey || '__t'`. *Unions don't [normalize to just an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.* Defaults to `true` if `enable` and the schema was explicitly given a `discriminatorKey`.
+  - ```discriminate```: If `true`, references to the schema will produce normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute) using `discriminatorKey || '__t'`. *Unions don't [normalize to an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.* Defaults to `true` if `enable` and the schema was explicitly given a `discriminatorKey`.
 
 See [our tests](https://github.com/saiichihashimoto/mongoose-normalizr/blob/master/src/index.spec.js) for examples!
