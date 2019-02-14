@@ -11,7 +11,7 @@ You use [mongoose](https://www.npmjs.com/package/mongoose) to model your API's b
 
 You use [normalizr](https://www.npmjs.com/package/normalizr) to normalize you API data on the frontend.
 
-normalizr entities represent nested data... but so do mongoose schemas! You're don't want to [repeat yourself](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). You want to generate normalizr entities directly from your mongoose schemas.
+normalizr entities represent nested data... but so do mongoose schemas! You don't want to [repeat yourself](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). You want to generate normalizr entities directly from your mongoose schemas.
 
 Here you go!
 
@@ -23,7 +23,6 @@ Here you go!
 - Supports [Sub Docs](http://mongoosejs.com/docs/subdocs.html).
 - Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
 - Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html).
-- ~~Supports [Dynamic References (refPath)](http://mongoosejs.com/docs/populate.html#dynamic-ref)~~ *TODO*.
 
 ## Installation
 
