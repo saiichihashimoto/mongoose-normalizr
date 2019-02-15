@@ -1,10 +1,13 @@
 {
   "name": "mongoose-normalizr",
   "version": "0.0.0-development",
-  "description": "Define normalizr entities from mongoose schemas",
+  "description": "Generate normalizr schemas from mongoose schemas!",
   "keywords": [
     "mongoose",
-    "normalizr"
+    "mongoose-model",
+    "mongoose-schema",
+    "normalizr",
+    "normalizr-schema"
   ],
   "homepage": "https://saiichihashimoto.github.io/mongoose-normalizr/",
   "bugs": {

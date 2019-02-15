@@ -4,20 +4,30 @@ import { schema as normalizr } from 'normalizr';
 
 const { Entity, Union } = normalizr;
 
-function getEntityFromResource({ reference, entity, discriminate, schema } = {}, entityReference) {
-	const { _userProvidedOptions: { discriminatorKey } = {} } = schema || {};
-
+function getNormalizrSchema(
+	{
+		reference,
+		normalizrSchema,
+		discriminate,
+		mongooseSchema: {
+			_userProvidedOptions: {
+				discriminatorKey,
+			} = {},
+		} = {},
+	} = {},
+	normalizrSchemas,
+) {
 	return reference && (
 		(discriminate || (discriminate !== false && discriminatorKey)) ?
-			new Union(entityReference, discriminatorKey || '__t') :
-			entity
+			new Union(normalizrSchemas, discriminatorKey || '__t') :
+			normalizrSchema
 	);
 }
 
-function findRefs(resources, tree, entityReference) {
-	const obj = Object.entries(tree)
+function createDefinition(tree, mongooseOptions, normalizrSchemas) {
+	return Object.entries(tree)
 		.filter(([, subTree]) => subTree && typeof (subTree) === 'object')
-		.reduce((acc, [key, subTree]) => {
+		.map(([key, subTree]) => {
 			const {
 				constructor,
 				options: {
@@ -29,78 +39,83 @@ function findRefs(resources, tree, entityReference) {
 				ref: subTreeRef,
 			} = subTree;
 
-			let definition;
-			switch (constructor) {
-				case Schema:
-					definition = getEntityFromResource(
-						Object.values(resources)
-							.find(({ schema }) => schema === subTree),
-						entityReference,
-					);
-					break;
-				case VirtualType:
-					if (ref && localField && foreignField) {
-						const entity = getEntityFromResource(resources[ref], entityReference);
-						definition = entity && (justOne ? entity : [entity]);
-					}
-					break;
-				default:
-					if (subTreeRef) {
-						definition = getEntityFromResource(resources[subTreeRef], entityReference);
-					} else {
-						const subObj = findRefs(resources, subTree, entityReference);
-						definition = subObj && (Array.isArray(subTree) ? [subObj[0]] : subObj);
-					}
-					break;
+			if (constructor === Schema) {
+				return [key, getNormalizrSchema(
+					Object.values(mongooseOptions)
+						.find(({ mongooseSchema }) => mongooseSchema === subTree),
+					normalizrSchemas,
+				)];
 			}
-			if (definition) {
-				acc[key] = definition;
-			}
-			return acc;
-		}, {});
 
-	return Object.keys(obj).length && obj;
+			if (constructor === VirtualType) {
+				if (!ref || !localField || !foreignField) {
+					return [key, null];
+				}
+				const normalizrSchema = getNormalizrSchema(mongooseOptions[ref], normalizrSchemas);
+				return [key, normalizrSchema && (justOne ? normalizrSchema : [normalizrSchema])];
+			}
+
+			if (subTreeRef) {
+				return [key, getNormalizrSchema(mongooseOptions[subTreeRef], normalizrSchemas)];
+			}
+
+			const definition = createDefinition(subTree, mongooseOptions, normalizrSchemas);
+			return [key, definition && (Array.isArray(subTree) ? [definition[0]] : definition)];
+		})
+		.filter(([, definition]) => definition)
+		.reduce((acc, [key, definition]) => ({
+			...acc,
+			[key]: definition,
+		}), null);
 }
 
-export default (schemas) => {
-	const resources = Object.entries(schemas)
-		.reduce((acc, [modelName, resource]) => {
-			const options = (resource.constructor === Schema) ?
-				{ schema: resource } :
-				resource;
-
+export default (input) => {
+	const mongooseOptions = Object.entries(input)
+		.map(([modelName, schema]) => [
+			modelName,
+			(schema.constructor === Schema) ?
+				{ schema } :
+				schema,
+		])
+		.reduce((acc, [modelName, schemaOptions]) => {
 			const {
+				schema: mongooseSchema,
 				collection = pluralize(modelName),
 				enable = true,
 				define = true,
 				reference = true,
-				schema,
 				discriminate,
-			} = options;
+			} = schemaOptions;
 
-			acc[modelName] = {
-				collection,
-				schema,
-				entity:       new Entity(collection),
-				define:       enable && define,
-				reference:    enable && reference,
-				discriminate: enable && discriminate,
+			return {
+				...acc,
+				[modelName]: {
+					collection,
+					mongooseSchema,
+					normalizrSchema: new Entity(collection),
+					define:          enable && define,
+					reference:       enable && reference,
+					discriminate:    enable && discriminate,
+				},
 			};
-
-			return acc;
 		}, {});
 
-	const entityReference = Object.entries(resources)
-		.reduce((acc, [modelName, { entity, reference }]) => (
-			reference ? { ...acc, [modelName]: entity } : acc
-		), {});
+	const normalizrSchemas = Object.entries(mongooseOptions)
+		.filter(([, { reference }]) => reference)
+		.reduce((acc, [modelName, { normalizrSchema }]) => ({
+			...acc,
+			[modelName]: normalizrSchema,
+		}), {});
 
-	Object.values(resources)
+	Object.values(mongooseOptions)
 		.filter(({ define }) => define)
-		.forEach(({ entity, schema: { tree } }) => {
-			entity.define(findRefs(resources, tree, entityReference) || {});
+		.forEach(({ normalizrSchema, mongooseSchema: { tree } }) => {
+			normalizrSchema.define(createDefinition(tree, mongooseOptions, normalizrSchemas) || {});
 		});
 
-	return Object.values(resources)
-		.reduce((acc, { collection, entity }) => ({ ...acc, [collection]: entity }), {});
+	return Object.values(mongooseOptions)
+		.reduce((acc, { collection, normalizrSchema }) => ({
+			...acc,
+			[collection]: normalizrSchema,
+		}), {});
 };
