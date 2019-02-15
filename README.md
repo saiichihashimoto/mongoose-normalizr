@@ -22,30 +22,34 @@ import mongoose from 'mongoose';
 import normalizr from 'normalizr';
 import mongooseNormalizr from 'mongoose-normalizr';
 
-const Foo = mongoose.Schema({ bar: { type: mongoose.Schema.Types.ObjectId, ref: 'Bar' } });
-const Bar = mongoose.Schema({ foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }] });
+const Foo = mongoose.Schema({
+  bar: { type: mongoose.Schema.Types.ObjectId, ref: 'Bar' },
+});
+const Bar = mongoose.Schema({
+  foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }],
+});
 
 const normalizrs = mongooseNormalizr({
-	Foo,
-	Bar,
+  Foo,
+  Bar,
 });
 
 const denormalizedFoo = {
-	id:  'foo1',
-	bar: {
-		id:   'bar1',
-		foos: [
-			{
-				id: 'foo2',
-			},
-			{
-				id:  'foo3',
-				bar: {
-					id: 'bar2',
-				},
-			},
-		],
-	},
+  id:  'foo1',
+  bar: {
+    id:   'bar1',
+    foos: [
+      {
+        id: 'foo2',
+      },
+      {
+        id:  'foo3',
+        bar: {
+          id: 'bar2',
+        },
+      },
+    ],
+  },
 };
 
 console.log('normalized:', normalizr.normalize(denormalizedFoo, normalizrs.foos));
@@ -53,34 +57,34 @@ console.log('normalized:', normalizr.normalize(denormalizedFoo, normalizrs.foos)
 
 ```json
 {
-	"result": "foo1",
-	"entities": {
-		"foos": {
-			"foo2": {
-				"id": "foo2"
-			},
-			"foo3": {
-				"id": "foo3",
-				"bar": "bar2"
-			},
-			"foo1": {
-				"id": "foo1",
-				"bar": "bar1"
-			}
-		},
-		"bars": {
-			"bar2": {
-				"id": "bar2"
-			},
-			"bar1": {
-				"id": "bar1",
-				"foos": [
-				"foo2",
-				"foo3"
-				]
-			}
-		}
-	}
+  "result": "foo1",
+  "entities": {
+    "foos": {
+      "foo1": {
+        "id": "foo1",
+        "bar": "bar1"
+      },
+      "foo2": {
+        "id": "foo2"
+      },
+      "foo3": {
+        "id": "foo3",
+        "bar": "bar2"
+      }
+    },
+    "bars": {
+      "bar1": {
+        "id": "bar1",
+        "foos": [
+          "foo2",
+          "foo3"
+        ]
+      },
+      "bar2": {
+        "id": "bar2"
+      }
+    }
+  }
 }
 ```
 
