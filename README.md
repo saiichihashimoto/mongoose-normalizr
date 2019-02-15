@@ -23,33 +23,33 @@ import normalizr from 'normalizr';
 import mongooseNormalizr from 'mongoose-normalizr';
 
 const Foo = mongoose.Schema({
-  bar: { type: mongoose.Schema.Types.ObjectId, ref: 'Bar' },
+	bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId },
 });
 const Bar = mongoose.Schema({
-  foos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Foo' }],
+	foos: [{ ref: 'Foo', type: mongoose.Schema.Types.ObjectId }],
 });
 
 const normalizrs = mongooseNormalizr({
-  Foo,
-  Bar,
+	Foo,
+	Bar,
 });
 
 const denormalizedFoo = {
-  id:  'foo1',
-  bar: {
-    id:   'bar1',
-    foos: [
-      {
-        id: 'foo2',
-      },
-      {
-        id:  'foo3',
-        bar: {
-          id: 'bar2',
-        },
-      },
-    ],
-  },
+	id:  'foo1',
+	bar: {
+		id:   'bar1',
+		foos: [
+			{
+				id: 'foo2',
+			},
+			{
+				id:  'foo3',
+				bar: {
+					id: 'bar2',
+				},
+			},
+		],
+	},
 };
 
 console.log('normalized:', normalizr.normalize(denormalizedFoo, normalizrs.foos));
