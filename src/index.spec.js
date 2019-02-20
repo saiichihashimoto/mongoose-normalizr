@@ -4,10 +4,23 @@ import { schema as normalizr } from 'normalizr';
 import { version as normalizrVersion } from 'normalizr/package';
 import mongooseNormalizr from '.';
 
+const normalizrIs1 = semver.satisfies(normalizrVersion, '>=1.0.0');
+const normalizrIs2 = semver.satisfies(normalizrVersion, '>=2.0.0');
+const normalizrIs3 = semver.satisfies(normalizrVersion, '>=3.0.0');
+let normalizrEntity;
+let normalizrUnion;
+
+if (normalizrIs3) {
+	normalizrEntity = normalizr.Entity;
+	normalizrUnion = normalizr.Union;
+} else if (normalizrIs1) {
+	normalizrEntity = require('normalizr/lib/EntitySchema').default || require('normalizr/lib/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
+	normalizrUnion = require('normalizr/lib/UnionSchema').default || require('normalizr/lib/UnionSchema'); // eslint-disable-line global-require, import/no-unresolved
+} else {
+	normalizrEntity = require('normalizr/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
+}
+
 describe('mongoose-normalizr', () => {
-	const normalizrIs3 = semver.satisfies(normalizrVersion, '>=3.0.0');
-	const normalizrEntity = normalizrIs3 ? normalizr.Entity : require('normalizr/lib/EntitySchema').default || require('normalizr/lib/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
-	const normalizrUnion = normalizrIs3 ? normalizr.Union : require('normalizr/lib/UnionSchema').default || require('normalizr/lib/UnionSchema'); // eslint-disable-line global-require, import/no-unresolved
 	const dotSchema = normalizrIs3 ? '.schema' : '';
 	const dotSchemaUnion = normalizrIs3 ? '.schema' : '._itemSchema';
 
@@ -160,56 +173,59 @@ describe('mongoose-normalizr', () => {
 		expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`);
 	});
 
-	it('uses unions if discriminate=true', () => {
-		const normalizrs = mongooseNormalizr({
-			Foo: { discriminate: true, schema: mongoose.Schema({}) },
-			Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
-		});
+	// normalizr 1 doesn't have unions
+	if (normalizrIs2) {
+		it('uses unions if discriminate=true', () => {
+			const normalizrs = mongooseNormalizr({
+				Foo: { discriminate: true, schema: mongoose.Schema({}) },
+				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			});
 
-		expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
-		if (normalizrIs3) {
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
+			if (normalizrIs3) {
 			// mongoose discriminator keys are __t by default
 			// normalizr uses _schemaAttribute internally to determine the schema
-			expect(normalizrs.bars.schema.foo._schemaAttribute({ __t: 'discriminatorKey' })).toBe('discriminatorKey'); // eslint-disable-line no-underscore-dangle
-		} else {
-			expect(normalizrs.bars.foo.getSchemaKey({ __t: 'discriminatorKey' })).toBe('discriminatorKey');
-		}
-		// the union's schema needs to key schemas by model name to get the correct schema
-		expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Foo`, normalizrs.foos);
-		expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Bar`, normalizrs.bars);
-	});
-
-	it('uses unions if discriminatorKey', () => {
-		const normalizrs = mongooseNormalizr({
-			Foo: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }),
-			Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+				expect(normalizrs.bars.schema.foo._schemaAttribute({ __t: 'discriminatorKey' })).toBe('discriminatorKey'); // eslint-disable-line no-underscore-dangle
+			} else {
+				expect(normalizrs.bars.foo.getSchemaKey({ __t: 'discriminatorKey' })).toBe('discriminatorKey');
+			}
+			// the union's schema needs to key schemas by model name to get the correct schema
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Foo`, normalizrs.foos);
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Bar`, normalizrs.bars);
 		});
 
-		expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
-		if (normalizrIs3) {
-			expect(normalizrs.bars.schema.foo._schemaAttribute({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey'); // eslint-disable-line no-underscore-dangle
-		} else {
-			expect(normalizrs.bars.foo.getSchemaKey({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey');
-		}
-		expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Foo`, normalizrs.foos);
-		expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Bar`, normalizrs.bars);
-	});
+		it('uses unions if discriminatorKey', () => {
+			const normalizrs = mongooseNormalizr({
+				Foo: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }),
+				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			});
 
-	it('won\'t use a union if discriminate=false', () => {
-		const normalizrs = mongooseNormalizr({
-			Foo: { discriminate: false, schema: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }) },
-			Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
+			if (normalizrIs3) {
+				expect(normalizrs.bars.schema.foo._schemaAttribute({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey'); // eslint-disable-line no-underscore-dangle
+			} else {
+				expect(normalizrs.bars.foo.getSchemaKey({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey');
+			}
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Foo`, normalizrs.foos);
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Bar`, normalizrs.bars);
 		});
 
-		expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
-	});
+		it('won\'t use a union if discriminate=false', () => {
+			const normalizrs = mongooseNormalizr({
+				Foo: { discriminate: false, schema: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }) },
+				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			});
 
-	it('won\'t use a union if enable=false', () => {
-		const normalizrs = mongooseNormalizr({
-			Foo: { enable: false, schema: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }) },
-			Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
 		});
 
-		expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
-	});
+		it('won\'t use a union if enable=false', () => {
+			const normalizrs = mongooseNormalizr({
+				Foo: { enable: false, schema: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }) },
+				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			});
+
+			expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
+		});
+	}
 });
