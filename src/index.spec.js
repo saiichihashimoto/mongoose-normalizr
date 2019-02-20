@@ -260,23 +260,6 @@ describe('mongoose-normalizr', () => {
 				expect(normalized).toHaveProperty('entities.bazs.2', { id: 2, type: 'Baz' });
 			});
 
-			it('ignores unspecified schemas', () => {
-				const schemas = {
-					Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
-					Bar: mongoose.Schema({}),
-				};
-
-				const BarModel = mongoose.model('Bar', schemas.Bar);
-				BarModel.discriminator('Baz', mongoose.Schema({}));
-
-				const normalizrs = mongooseNormalizr(schemas);
-
-				const normalized = normalize({ id: 1, bar: { id: 2, __t: 'Baz' } }, normalizrs.foos);
-
-				expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2, __t: 'Baz' });
-				expect(normalized).not.toHaveProperty('entities.bazs.2');
-			});
-
 			it('is disabled with enable=false', () => {
 				const schemas = {
 					Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
