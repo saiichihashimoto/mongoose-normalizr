@@ -13,9 +13,11 @@ let normalizrUnion;
 if (normalizrIs3) {
 	normalizrEntity = normalizr.Entity;
 	normalizrUnion = normalizr.Union;
-} else if (normalizrIs1) {
+} else if (normalizrIs2) {
 	normalizrEntity = require('normalizr/lib/EntitySchema').default || require('normalizr/lib/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
 	normalizrUnion = require('normalizr/lib/UnionSchema').default || require('normalizr/lib/UnionSchema'); // eslint-disable-line global-require, import/no-unresolved
+} else if (normalizrIs1) {
+	normalizrEntity = require('normalizr/lib/EntitySchema').default || require('normalizr/lib/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
 } else {
 	normalizrEntity = require('normalizr/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
 }
