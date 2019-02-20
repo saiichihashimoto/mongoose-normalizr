@@ -227,5 +227,23 @@ describe('mongoose-normalizr', () => {
 
 			expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
 		});
+	} else {
+		it('won\'t use unions if discriminate=true', () => {
+			const normalizrs = mongooseNormalizr({
+				Foo: { discriminate: true, schema: mongoose.Schema({}) },
+				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			});
+
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrEntity));
+		});
+
+		it('won\'t use unions if discriminatorKey', () => {
+			const normalizrs = mongooseNormalizr({
+				Foo: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }),
+				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+			});
+
+			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrEntity));
+		});
 	}
 });
