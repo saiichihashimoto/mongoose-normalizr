@@ -1,11 +1,17 @@
 language: node_js
 node_js:
   - 11
+env:
+  -
+  - MONGOOSE_VERSION="^4.0.0"
+before_script:
+  - if [ ! -z ${MONGOOSE_VERSION+x} ]; then npm install mongoose@"$MONGOOSE_VERSION"; fi
 after_success:
   - npx codecov
 jobs:
   include:
     - stage: release
+      if: branch = master
       node_js: lts/*
       deploy:
         provider: script
