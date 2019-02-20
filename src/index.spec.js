@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import semver from 'semver';
 import { normalize } from 'normalizr';
+import { version as mongooseVersion } from 'mongoose/package';
 import { version as normalizrVersion } from 'normalizr/package';
 import mongooseNormalizr from '.';
 
@@ -216,7 +217,7 @@ describe('mongoose-normalizr', () => {
 		});
 	});
 
-	if (semver.satisfies(normalizrVersion, '>=2.0.0')) {
+	if (semver.satisfies(normalizrVersion, '>=2.0.0') && semver.satisfies(mongooseVersion, '>=5.0.2')) {
 		describe('discriminators', () => {
 			afterEach(() => {
 				mongoose.connections[0].collections = {};
