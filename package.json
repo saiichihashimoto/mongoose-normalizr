@@ -51,7 +51,7 @@
     "normalizr": "3.3.0"
   },
   "peerDependencies": {
-    "mongoose": ">=4.13.18 <6.0.0",
+    "mongoose": ">=4.13.0 <6.0.0",
     "normalizr": "^3.0.0"
   }
 }
