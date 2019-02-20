@@ -229,73 +229,70 @@ describe('mongoose-normalizr', () => {
 			if (semver.satisfies(normalizrVersion, '>=2.0.0')) {
 				it('generates unions', () => {
 					const schemas = {
-						Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+						Foo: mongoose.Schema({}),
 						Bar: mongoose.Schema({}),
-						Baz: mongoose.Schema({}),
 					};
 
-					const BarModel = mongoose.model('Bar', schemas.Bar);
-					BarModel.discriminator('Baz', schemas.Baz);
+					const FooModel = mongoose.model('Foo', schemas.Foo);
+					FooModel.discriminator('Bar', schemas.Bar);
 
 					const normalizrs = mongooseNormalizr(schemas);
 
-					const normalized = normalize({ id: 1, bar: { id: 2, __t: 'Baz' } }, normalizrs.foos);
+					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2, schema: 'Baz' });
-					expect(normalized).toHaveProperty('entities.bazs.2', { id: 2, __t: 'Baz' });
+					expect(normalized).toHaveProperty('result', { id: 1, schema: 'Bar' });
+					expect(normalized).not.toHaveProperty('entities.foos');
+					expect(normalized).toHaveProperty('entities.bars.1', { id: 1, __t: 'Bar' });
 				});
 
 				it('uses discriminatorKey', () => {
 					const schemas = {
-						Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
-						Bar: mongoose.Schema({}, { discriminatorKey: 'type' }),
-						Baz: mongoose.Schema({}),
+						Foo: mongoose.Schema({}, { discriminatorKey: 'type' }),
+						Bar: mongoose.Schema({}),
 					};
 
-					const BarModel = mongoose.model('Bar', schemas.Bar);
-					BarModel.discriminator('Baz', schemas.Baz);
+					const FooModel = mongoose.model('Foo', schemas.Foo);
+					FooModel.discriminator('Bar', schemas.Bar);
 
 					const normalizrs = mongooseNormalizr(schemas);
 
-					const normalized = normalize({ id: 1, bar: { id: 2, type: 'Baz' } }, normalizrs.foos);
+					const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toHaveProperty('entities.bazs.2', { id: 2, type: 'Baz' });
+					expect(normalized).toHaveProperty('entities.bars.1', { id: 1, type: 'Bar' });
 				});
 
 				it('is disabled with enable=false', () => {
 					const schemas = {
-						Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
-						Bar: { enable: false, schema: mongoose.Schema({}) },
-						Baz: mongoose.Schema({}),
+						Foo: { enable: false, schema: mongoose.Schema({}) },
+						Bar: mongoose.Schema({}),
 					};
 
-					const BarModel = mongoose.model('Bar', schemas.Bar.schema);
-					BarModel.discriminator('Baz', schemas.Baz);
+					const FooModel = mongoose.model('Foo', schemas.Foo.schema);
+					FooModel.discriminator('Bar', schemas.Bar);
 
 					const normalizrs = mongooseNormalizr(schemas);
 
-					const normalized = normalize({ id: 1, bar: { id: 2, __t: 'Baz' } }, normalizrs.foos);
+					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).not.toHaveProperty('entities.bazs.2');
+					expect(normalized).not.toHaveProperty('entities.bars');
 				});
 			} else {
 				it('doesn\'t generate unions', () => {
 					const schemas = {
-						Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+						Foo: mongoose.Schema({}),
 						Bar: mongoose.Schema({}),
-						Baz: mongoose.Schema({}),
 					};
 
-					const BarModel = mongoose.model('Bar', schemas.Bar);
-					BarModel.discriminator('Baz', schemas.Baz);
+					const FooModel = mongoose.model('Foo', schemas.Foo);
+					FooModel.discriminator('Bar', schemas.Bar);
 
 					const normalizrs = mongooseNormalizr(schemas);
 
-					const normalized = normalize({ id: 1, bar: { id: 2, __t: 'Baz' } }, normalizrs.foos);
+					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
-					expect(normalized).toHaveProperty('entities.bars.2.id', 2);
-					expect(normalized).not.toHaveProperty('entities.bazs');
+					expect(normalized).toHaveProperty('result', 1);
+					expect(normalized).toHaveProperty('entities.foos.1', { id: 1, __t: 'Bar' });
+					expect(normalized).not.toHaveProperty('entities.bars');
 				});
 			}
 		});
