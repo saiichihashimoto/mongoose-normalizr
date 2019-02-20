@@ -24,7 +24,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib --source-maps inline --delete-dir-on-start --verbose --ignore \"**/*.spec.js\"",
-    "test": "jest --verbose $(if [ -z \"$CI\" ]; then echo --watch; else echo --color --coverage; fi)"
+    "test": "jest --verbose $(if [ -z ${CI+x} ]; then echo --watch; else echo --color --coverage; fi)"
   },
   "config": {
     "commitizen": {
@@ -51,7 +51,7 @@
     "normalizr": "3.3.0"
   },
   "peerDependencies": {
-    "mongoose": "^5.4.13",
-    "normalizr": "^3.3.0"
+    "mongoose": ">=4.13.0 <6.0.0",
+    "normalizr": "^3.0.0"
   }
 }
