@@ -17,9 +17,9 @@ describe('mongoose-normalizr', () => {
 		expect(normalized).toHaveProperty('entities.foos.1.id', 1);
 	});
 
-	it('uses provided collection name for key', () => {
+	it('uses schema options.collection for key', () => {
 		const normalizrs = mongooseNormalizr({
-			Foo: { collection: 'foo', schema: mongoose.Schema({}) },
+			Foo: mongoose.Schema({}, { collection: 'foo' }),
 		});
 
 		const normalized = normalize({ id: 1 }, normalizrs.foo);

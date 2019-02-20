@@ -98,16 +98,19 @@ export default (input) => {
 		.reduce((acc, [modelName, schemaOptions]) => {
 			const {
 				schema: mongooseSchema,
-				collection = pluralize(modelName),
 				enable = true,
 				define = true,
 				reference = true,
 			} = schemaOptions;
+			const {
+				options: {
+					collection = pluralize(modelName),
+				} = {},
+			} = mongooseSchema;
 
 			return {
 				...acc,
 				[modelName]: {
-					collection,
 					mongooseSchema,
 					normalizrSchema: new Entity(collection),
 					define:          enable && define,
@@ -130,8 +133,8 @@ export default (input) => {
 		});
 
 	return Object.values(mongooseOptions)
-		.reduce((acc, { collection, normalizrSchema }) => ({
+		.reduce((acc, { normalizrSchema }) => ({
 			...acc,
-			[collection]: normalizrSchema,
+			[normalizrSchema.key]: normalizrSchema,
 		}), {});
 };

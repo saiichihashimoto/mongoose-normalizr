@@ -102,9 +102,8 @@ console.log('normalized:', normalizr.normalize(denormalizedFoo, normalizrs.foos)
 
 - ```schemas```: **required**: An object mapping mongoose model names (**not** collection names) to mongoose schemas. Instead of a mongoose schema, you may supply an object with the following properties:
 	- ```schema```: **required** The mongoose schema to use.
-	- ```collection```: A collection name to use for the normalizr schemas Defaults to [`pluralize(modelName)`](https://github.com/vkarpov15/mongoose-legacy-pluralize).
 	- ```define```: If `false`, produces an empty normalizr schema and doesn't follow any references. Defaults to value of `enable`.
-	- ```reference```: If `false`, other produced schemas will ignore references to this schema Defaults to value of `enable`.
+	- ```reference```: If `false`, other produced schemas will ignore references to this schema. Defaults to value of `enable`.
 	- ```enable```: Shorthand for `define` && `reference`. Defaults to `true`.
 
 See [our tests](https://github.com/saiichihashimoto/mongoose-normalizr/blob/master/src/index.spec.js) for examples!
