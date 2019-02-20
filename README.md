@@ -95,6 +95,7 @@ console.log('normalized:', normalizr.normalize(denormalizedFoo, normalizrs.foos)
 - Supports [Subdocuments](http://mongoosejs.com/docs/subdocs.html).
 - Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
 - Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html).
+- Works on *all* versions of normalizr, all the way back to `0.1.1`.
 
 # ```mongooseNormalizr(schemas)```
 
