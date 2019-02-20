@@ -7,9 +7,11 @@ const {
 	Union,
 } = normalizr || {};
 
-const union = unionOf ?
-	(schemas, schemaAttribute) => unionOf(schemas, { schemaAttribute }) :
-	(...args) => new Union(...args);
+const union = (
+	(unionOf && ((schemas, schemaAttribute) => unionOf(schemas, { schemaAttribute }))) ||
+	(Union && ((schemas, discriminatorKey) => new Union(schemas, discriminatorKey))) ||
+	((schemas, discriminatorKey, normalizrSchema) => normalizrSchema)
+);
 
 function getNormalizrSchema(
 	{
@@ -26,7 +28,7 @@ function getNormalizrSchema(
 ) {
 	return reference && (
 		(discriminate || (discriminate !== false && discriminatorKey)) ?
-			union(normalizrSchemas, discriminatorKey || '__t') :
+			union(normalizrSchemas, discriminatorKey || '__t', normalizrSchema) :
 			normalizrSchema
 	);
 }
