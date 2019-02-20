@@ -1,8 +1,15 @@
 import pluralize from 'mongoose-legacy-pluralize';
 import { Schema, VirtualType } from 'mongoose';
-import { schema as normalizr } from 'normalizr';
+import { schema as normalizr, Schema as NormalizrPre3Schema, unionOf } from 'normalizr';
 
-const { Entity, Union } = normalizr;
+const {
+	Entity = NormalizrPre3Schema,
+	Union,
+} = normalizr || {};
+
+const union = unionOf ?
+	(schemas, schemaAttribute) => unionOf(schemas, { schemaAttribute }) :
+	(...args) => new Union(...args);
 
 function getNormalizrSchema(
 	{
@@ -19,7 +26,7 @@ function getNormalizrSchema(
 ) {
 	return reference && (
 		(discriminate || (discriminate !== false && discriminatorKey)) ?
-			new Union(normalizrSchemas, discriminatorKey || '__t') :
+			union(normalizrSchemas, discriminatorKey || '__t') :
 			normalizrSchema
 	);
 }

@@ -4,6 +4,8 @@ node_js:
 env:
   -
   - MONGOOSE_VERSION="4.13.0"
+  - NORMALIZR_VERSION="2.0.0"
+  - NORMALIZR_VERSION="^2.0.0"
 before_script:
   - if [ ! -z ${MONGOOSE_VERSION+x} ]; then npm install mongoose@"$MONGOOSE_VERSION"; fi
   - if [ ! -z ${NORMALIZR_VERSION+x} ]; then npm install normalizr@"$NORMALIZR_VERSION"; fi
