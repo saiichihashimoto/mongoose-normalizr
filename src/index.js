@@ -9,8 +9,8 @@ const {
 
 const union = (
 	(unionOf && ((schemas, schemaAttribute) => unionOf(schemas, { schemaAttribute }))) ||
-	(Union && ((schemas, discriminatorKey) => new Union(schemas, discriminatorKey))) ||
-	((schemas, discriminatorKey, normalizrSchema) => normalizrSchema)
+	(Union && ((schemas, schemaAttribute) => new Union(schemas, schemaAttribute))) ||
+	((schemas, schemaAttribute, normalizrSchema) => normalizrSchema)
 );
 
 function getNormalizrSchema(

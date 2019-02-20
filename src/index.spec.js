@@ -185,9 +185,7 @@ describe('mongoose-normalizr', () => {
 
 			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
 			if (normalizrIs3) {
-			// mongoose discriminator keys are __t by default
-			// normalizr uses _schemaAttribute internally to determine the schema
-				expect(normalizrs.bars.schema.foo._schemaAttribute({ __t: 'discriminatorKey' })).toBe('discriminatorKey'); // eslint-disable-line no-underscore-dangle
+				expect(normalizrs.bars.schema.foo.getSchemaAttribute({ __t: 'discriminatorKey' })).toBe('discriminatorKey');
 			} else {
 				expect(normalizrs.bars.foo.getSchemaKey({ __t: 'discriminatorKey' })).toBe('discriminatorKey');
 			}
@@ -204,7 +202,7 @@ describe('mongoose-normalizr', () => {
 
 			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
 			if (normalizrIs3) {
-				expect(normalizrs.bars.schema.foo._schemaAttribute({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey'); // eslint-disable-line no-underscore-dangle
+				expect(normalizrs.bars.schema.foo.getSchemaAttribute({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey');
 			} else {
 				expect(normalizrs.bars.foo.getSchemaKey({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey');
 			}
