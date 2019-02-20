@@ -135,6 +135,6 @@ export default (input) => {
 	return Object.values(mongooseOptions)
 		.reduce((acc, { normalizrSchema }) => ({
 			...acc,
-			[normalizrSchema.key]: normalizrSchema,
+			[normalizrSchema._key]: normalizrSchema, // eslint-disable-line no-underscore-dangle
 		}), {});
 };
