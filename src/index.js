@@ -17,9 +17,9 @@ function getNormalizrSchema(
 	{
 		reference,
 		normalizrSchema,
-		discriminate,
 		mongooseSchema: {
-			_userProvidedOptions: {
+			discriminators,
+			options: {
 				discriminatorKey,
 			} = {},
 		} = {},
@@ -27,8 +27,17 @@ function getNormalizrSchema(
 	normalizrSchemas,
 ) {
 	return reference && (
-		(discriminate || (discriminate !== false && discriminatorKey)) ?
-			union(normalizrSchemas, discriminatorKey || '__t', normalizrSchema) :
+		discriminators ?
+			union(
+				Object.entries(normalizrSchemas)
+					.filter(([modelName]) => discriminators[modelName])
+					.reduce((acc, [modelName, normalizrSchema2]) => ({
+						...acc,
+						[modelName]: normalizrSchema2,
+					}), {}),
+				discriminatorKey,
+				normalizrSchema,
+			) :
 			normalizrSchema
 	);
 }
@@ -93,7 +102,6 @@ export default (input) => {
 				enable = true,
 				define = true,
 				reference = true,
-				discriminate,
 			} = schemaOptions;
 
 			return {
@@ -104,7 +112,6 @@ export default (input) => {
 					normalizrSchema: new Entity(collection),
 					define:          enable && define,
 					reference:       enable && reference,
-					discriminate:    enable && discriminate,
 				},
 			};
 		}, {});

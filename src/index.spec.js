@@ -1,31 +1,10 @@
 import mongoose from 'mongoose';
 import semver from 'semver';
-import { schema as normalizr, normalize } from 'normalizr';
+import { normalize } from 'normalizr';
 import { version as normalizrVersion } from 'normalizr/package';
 import mongooseNormalizr from '.';
 
-const normalizrIs1 = semver.satisfies(normalizrVersion, '>=1.0.0');
-const normalizrIs2 = semver.satisfies(normalizrVersion, '>=2.0.0');
-const normalizrIs3 = semver.satisfies(normalizrVersion, '>=3.0.0');
-let normalizrEntity;
-let normalizrUnion;
-
-if (normalizrIs3) {
-	normalizrEntity = normalizr.Entity;
-	normalizrUnion = normalizr.Union;
-} else if (normalizrIs2) {
-	normalizrEntity = require('normalizr/lib/EntitySchema').default || require('normalizr/lib/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
-	normalizrUnion = require('normalizr/lib/UnionSchema').default || require('normalizr/lib/UnionSchema'); // eslint-disable-line global-require, import/no-unresolved
-} else if (normalizrIs1) {
-	normalizrEntity = require('normalizr/lib/EntitySchema').default || require('normalizr/lib/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
-} else {
-	normalizrEntity = require('normalizr/EntitySchema'); // eslint-disable-line global-require, import/no-unresolved
-}
-
 describe('mongoose-normalizr', () => {
-	const dotSchema = normalizrIs3 ? '.schema' : '';
-	const dotSchemaUnion = normalizrIs3 ? '.schema' : '._itemSchema';
-
 	it('returns an object of normalizr schemas', () => {
 		const normalizrs = mongooseNormalizr({
 			Foo: mongoose.Schema({}),
@@ -48,7 +27,7 @@ describe('mongoose-normalizr', () => {
 		expect(normalized).toHaveProperty('entities.foo.1.id', 1);
 	});
 
-	it('references schemas using `ref`', () => {
+	it('references schemas', () => {
 		const normalizrs = mongooseNormalizr({
 			Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
 			Bar: mongoose.Schema({}),
@@ -60,84 +39,10 @@ describe('mongoose-normalizr', () => {
 		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 	});
 
-	it('ignores `ref` of unspecified models', () => {
+	it('ignores unspecified schemas', () => {
 		const normalizrs = mongooseNormalizr({
 			Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
 		});
-
-		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
-
-		expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
-		expect(normalized).not.toHaveProperty('entities.bars.2');
-	});
-
-	it('references schemas using subdocuments', () => {
-		const BarSchema = mongoose.Schema({});
-
-		const normalizrs = mongooseNormalizr({
-			Foo: mongoose.Schema({ bar: BarSchema }),
-			Bar: BarSchema,
-		});
-
-		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
-
-		expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
-		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
-	});
-
-	it('references schemas using populate virtuals', () => {
-		const schemas = {
-			Foo: mongoose.Schema({ barId: { type: String } }),
-			Bar: mongoose.Schema({ fooId: { type: String } }),
-		};
-
-		schemas.Foo.virtual('bars', {
-			ref:          'Bar',
-			localField:   'barId',
-			foreignField: 'fooId',
-		});
-
-		const normalizrs = mongooseNormalizr(schemas);
-
-		const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
-
-		expect(normalized).toHaveProperty('entities.foos.1.bars', normalizrIs3 ? [2] : { 0: 2 });
-		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
-	});
-
-	it('references schemas using populate virtuals respecting justOne', () => {
-		const schemas = {
-			Foo: mongoose.Schema({ barId: { type: String } }),
-			Bar: mongoose.Schema({ fooId: { type: String } }),
-		};
-
-		schemas.Foo.virtual('bar', {
-			ref:          'Bar',
-			localField:   'barId',
-			foreignField: 'fooId',
-			justOne:      true,
-		});
-
-		const normalizrs = mongooseNormalizr(schemas);
-
-		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
-
-		expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
-		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
-	});
-
-	it('ignores populate virtuals of unspecified models', () => {
-		const schemas = {
-			Foo: mongoose.Schema({ barId: { type: String } }),
-		};
-
-		schemas.Foo.virtual('bar', {
-			ref:          'Bar',
-			localField:   'barId',
-			foreignField: 'fooId',
-		});
-
-		const normalizrs = mongooseNormalizr(schemas);
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
@@ -168,7 +73,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('entities.foos.1.bars', normalizrIs3 ? [2] : { 0: 2 });
+		expect(normalized).toHaveProperty('entities.foos.1.bars', semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 });
 		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 	});
 
@@ -220,75 +125,174 @@ describe('mongoose-normalizr', () => {
 		expect(normalized).not.toHaveProperty('entities.bars.2');
 	});
 
-	// normalizr 1 doesn't have unions
-	if (normalizrIs2) {
-		it('uses unions if discriminate=true', () => {
+	describe('subdocuments', () => {
+		it('references schemas', () => {
+			const BarSchema = mongoose.Schema({});
+
 			const normalizrs = mongooseNormalizr({
-				Foo: { discriminate: true, schema: mongoose.Schema({}) },
-				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+				Foo: mongoose.Schema({ bar: BarSchema }),
+				Bar: BarSchema,
 			});
 
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
-			if (normalizrIs3) {
-				expect(normalizrs.bars.schema.foo.getSchemaAttribute({ __t: 'discriminatorKey' })).toBe('discriminatorKey');
-			} else {
-				expect(normalizrs.bars.foo.getSchemaKey({ __t: 'discriminatorKey' })).toBe('discriminatorKey');
-			}
-			// the union's schema needs to key schemas by model name to get the correct schema
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Foo`, normalizrs.foos);
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Bar`, normalizrs.bars);
+			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+
+			expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
+			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 		});
 
-		it('uses unions if discriminatorKey', () => {
+		it('ignores unspecified schemas', () => {
+			const BarSchema = mongoose.Schema({});
+
 			const normalizrs = mongooseNormalizr({
-				Foo: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }),
-				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+				Foo: mongoose.Schema({ bar: BarSchema }),
 			});
 
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
-			if (normalizrIs3) {
-				expect(normalizrs.bars.schema.foo.getSchemaAttribute({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey');
-			} else {
-				expect(normalizrs.bars.foo.getSchemaKey({ discriminatorKey: 'discriminatorKey' })).toBe('discriminatorKey');
-			}
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Foo`, normalizrs.foos);
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo${dotSchemaUnion}.Bar`, normalizrs.bars);
+			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+
+			expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
+			expect(normalized).not.toHaveProperty('entities.bars.2');
+		});
+	});
+
+	describe('populate virtuals', () => {
+		it('references schemas', () => {
+			const schemas = {
+				Foo: mongoose.Schema({ barId: { type: String } }),
+				Bar: mongoose.Schema({ fooId: { type: String } }),
+			};
+
+			schemas.Foo.virtual('bars', {
+				ref:          'Bar',
+				localField:   'barId',
+				foreignField: 'fooId',
+			});
+
+			const normalizrs = mongooseNormalizr(schemas);
+
+			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
+
+			expect(normalized).toHaveProperty('entities.foos.1.bars', semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 });
+			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 		});
 
-		it('won\'t use a union if discriminate=false', () => {
-			const normalizrs = mongooseNormalizr({
-				Foo: { discriminate: false, schema: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }) },
-				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+		it('respects justOne', () => {
+			const schemas = {
+				Foo: mongoose.Schema({ barId: { type: String } }),
+				Bar: mongoose.Schema({ fooId: { type: String } }),
+			};
+
+			schemas.Foo.virtual('bar', {
+				ref:          'Bar',
+				localField:   'barId',
+				foreignField: 'fooId',
+				justOne:      true,
 			});
 
-			expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
+			const normalizrs = mongooseNormalizr(schemas);
+
+			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+
+			expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
+			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 		});
 
-		it('won\'t use a union if enable=false', () => {
-			const normalizrs = mongooseNormalizr({
-				Foo: { enable: false, schema: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }) },
-				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+		it('ignores unspecified schemas', () => {
+			const schemas = {
+				Foo: mongoose.Schema({ barId: { type: String } }),
+			};
+
+			schemas.Foo.virtual('bar', {
+				ref:          'Bar',
+				localField:   'barId',
+				foreignField: 'fooId',
 			});
 
-			expect(normalizrs).not.toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrUnion));
+			const normalizrs = mongooseNormalizr(schemas);
+
+			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+
+			expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
+			expect(normalized).not.toHaveProperty('entities.bars.2');
 		});
-	} else {
-		it('won\'t use unions if discriminate=true', () => {
-			const normalizrs = mongooseNormalizr({
-				Foo: { discriminate: true, schema: mongoose.Schema({}) },
-				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+	});
+
+	if (semver.satisfies(normalizrVersion, '>=2.0.0')) {
+		describe('discriminators', () => {
+			afterEach(() => {
+				mongoose.connections[0].collections = {};
+				mongoose.connections[0].models = {};
+				mongoose.modelSchemas = {};
+				mongoose.models = {};
 			});
 
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrEntity));
-		});
+			it('generates unions', () => {
+				const schemas = {
+					Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+					Bar: mongoose.Schema({}),
+					Baz: mongoose.Schema({}),
+				};
 
-		it('won\'t use unions if discriminatorKey', () => {
-			const normalizrs = mongooseNormalizr({
-				Foo: mongoose.Schema({}, { discriminatorKey: 'discriminatorKey' }),
-				Bar: mongoose.Schema({ foo: { ref: 'Foo', type: mongoose.Schema.Types.ObjectId } }),
+				const BarModel = mongoose.model('Bar', schemas.Bar);
+				BarModel.discriminator('Baz', schemas.Baz);
+
+				const normalizrs = mongooseNormalizr(schemas);
+
+				const normalized = normalize({ id: 1, bar: { id: 2, __t: 'Baz' } }, normalizrs.foos);
+
+				expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2, schema: 'Baz' });
+				expect(normalized).toHaveProperty('entities.bazs.2', { id: 2, __t: 'Baz' });
 			});
 
-			expect(normalizrs).toHaveProperty(`bars${dotSchema}.foo`, expect.any(normalizrEntity));
+			it('uses discriminatorKey', () => {
+				const schemas = {
+					Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+					Bar: mongoose.Schema({}, { discriminatorKey: 'type' }),
+					Baz: mongoose.Schema({}),
+				};
+
+				const BarModel = mongoose.model('Bar', schemas.Bar);
+				BarModel.discriminator('Baz', schemas.Baz);
+
+				const normalizrs = mongooseNormalizr(schemas);
+
+				const normalized = normalize({ id: 1, bar: { id: 2, type: 'Baz' } }, normalizrs.foos);
+
+				expect(normalized).toHaveProperty('entities.bazs.2', { id: 2, type: 'Baz' });
+			});
+
+			it('ignores unspecified schemas', () => {
+				const schemas = {
+					Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+					Bar: mongoose.Schema({}),
+				};
+
+				const BarModel = mongoose.model('Bar', schemas.Bar);
+				BarModel.discriminator('Baz', mongoose.Schema({}));
+
+				const normalizrs = mongooseNormalizr(schemas);
+
+				const normalized = normalize({ id: 1, bar: { id: 2, __t: 'Baz' } }, normalizrs.foos);
+
+				expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2, __t: 'Baz' });
+				expect(normalized).not.toHaveProperty('entities.bazs.2');
+			});
+
+			it('is disabled with enable=false', () => {
+				const schemas = {
+					Foo: mongoose.Schema({ bar: { ref: 'Bar', type: mongoose.Schema.Types.ObjectId } }),
+					Bar: { enable: false, schema: mongoose.Schema({}) },
+					Baz: mongoose.Schema({}),
+				};
+
+				const BarModel = mongoose.model('Bar', schemas.Bar.schema);
+				BarModel.discriminator('Baz', schemas.Baz);
+
+				const normalizrs = mongooseNormalizr(schemas);
+
+				const normalized = normalize({ id: 1, bar: { id: 2, __t: 'Baz' } }, normalizrs.foos);
+
+				expect(normalized).not.toHaveProperty('entities.bazs.2');
+			});
 		});
 	}
 });
