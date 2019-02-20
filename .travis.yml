@@ -3,9 +3,10 @@ node_js:
   - 11
 env:
   -
-  - MONGOOSE_VERSION="^4.0.0"
+  - MONGOOSE_VERSION="4.13.18"
 before_script:
   - if [ ! -z ${MONGOOSE_VERSION+x} ]; then npm install mongoose@"$MONGOOSE_VERSION"; fi
+  - if [ ! -z ${NORMALIZR_VERSION+x} ]; then npm install normalizr@"$NORMALIZR_VERSION"; fi
 after_success:
   - npx codecov
 jobs:
