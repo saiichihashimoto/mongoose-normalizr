@@ -94,17 +94,16 @@ console.log('normalized:', normalizr.normalize(denormalizedFoo, normalizrs.foos)
 - Traverses arrays and objects to find deep references.
 - Supports [Subdocuments](http://mongoosejs.com/docs/subdocs.html).
 - Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
-- Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html).
+- Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html) from mongoose^5.0.2
+  - It does this by generating normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute). *Unions don't [normalize to an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.*
 - Works on *all* versions of normalizr, all the way back to `0.1.1`.
 
 # ```mongooseNormalizr(schemas)```
 
 - ```schemas```: **required**: An object mapping mongoose model names (**not** collection names) to mongoose schemas. Instead of a mongoose schema, you may supply an object with the following properties:
 	- ```schema```: **required** The mongoose schema to use.
-	- ```collection```: A collection name to use for the normalizr schemas Defaults to [`pluralize(modelName)`](https://github.com/vkarpov15/mongoose-legacy-pluralize).
 	- ```define```: If `false`, produces an empty normalizr schema and doesn't follow any references. Defaults to value of `enable`.
-	- ```reference```: If `false`, other produced schemas will ignore references to this schema Defaults to value of `enable`.
-	- ```discriminate```: If `true`, references to the schema will produce normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute) using `discriminatorKey || '__t'`. *Unions don't [normalize to an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.* Defaults to `true` if `enable` and the schema was explicitly given a `discriminatorKey`.
-	- ```enable```: Shorthand for `define`, `reference`, & `discriminate`. Defaults to `true`.
+	- ```reference```: If `false`, other produced schemas will ignore references to this schema. Defaults to value of `enable`.
+	- ```enable```: Shorthand for `define` && `reference`. Defaults to `true`.
 
 See [our tests](https://github.com/saiichihashimoto/mongoose-normalizr/blob/master/src/index.spec.js) for examples!
