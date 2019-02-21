@@ -21,7 +21,6 @@ after_success:
 jobs:
   include:
     - stage: release
-      if: branch = master
       node_js: lts/*
       deploy:
         provider: script
