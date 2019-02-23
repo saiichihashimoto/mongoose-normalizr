@@ -137,7 +137,7 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bars', [2]);
+			expect(normalized).toHaveProperty('entities.foos.1.bars', semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 });
 			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 		});
 
