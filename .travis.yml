@@ -17,6 +17,9 @@ jobs:
     - env: MONGOOSE_VERSION="4.0.4"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
       after_success: npx codecov
+    - env: MONGOOSE_VERSION="~3.8.0"
+      before_script: npm install mongoose@"$MONGOOSE_VERSION"
+      after_success: npx codecov
 
     - stage: normalizr
       env: NORMALIZR_VERSION="3.0.0"
@@ -42,6 +45,7 @@ jobs:
       after_success: npx codecov
 
     - stage: release
+      if: branch = master
       node_js: lts/*
       deploy:
         provider: script
