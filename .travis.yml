@@ -4,51 +4,50 @@ node_js:
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
-after_success:
-  - npx codecov
 jobs:
   include:
     - stage: test
+      after_success: npx codecov
 
     - stage: mongoose
       env: MONGOOSE_VERSION="5.0.0"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
-      after_success:  npx codecov
+      after_success: npx codecov -F mongoose_5
     - env: MONGOOSE_VERSION="^4.0.0"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F mongoose_4
     - env: MONGOOSE_VERSION="4.0.4"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F mongoose_4
     - env: MONGOOSE_VERSION="~3.8.0"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F mongoose_3
     - env: MONGOOSE_VERSION="3.2.2"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F mongoose_3
 
     - stage: normalizr
       env: NORMALIZR_VERSION="3.0.0"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F normalizr_3
     - env: NORMALIZR_VERSION="^2.0.0"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F normalizr_2
     - env: NORMALIZR_VERSION="2.0.0"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F normalizr_2
     - env: NORMALIZR_VERSION="^1.0.0"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F normalizr_1
     - env: NORMALIZR_VERSION="1.0.0"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F normalizr_1
     - env: NORMALIZR_VERSION="^0.1.1"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F normalizr_0
     - env: NORMALIZR_VERSION="0.1.1"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
-      after_success: npx codecov
+      after_success: npx codecov -F normalizr_0
 
     - stage: release
       if: branch = master
