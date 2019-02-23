@@ -20,6 +20,9 @@ jobs:
     - env: MONGOOSE_VERSION="~3.8.0"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
       after_success: npx codecov
+    - env: MONGOOSE_VERSION="3.2.2"
+      before_script: npm install mongoose@"$MONGOOSE_VERSION"
+      after_success: npx codecov
 
     - stage: normalizr
       env: NORMALIZR_VERSION="3.0.0"
