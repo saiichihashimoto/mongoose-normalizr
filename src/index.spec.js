@@ -229,6 +229,27 @@ describe('mongoose-normalizr', () => {
 			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 		});
 
+		it('ignores if count=true', () => {
+			const schemas = {
+				Foo: mongoose.Schema({ barId: { type: String } }),
+				Bar: mongoose.Schema({ fooId: { type: String } }),
+			};
+
+			schemas.Foo.virtual('bars', {
+				ref:          'Bar',
+				localField:   'barId',
+				foreignField: 'fooId',
+				count:        true,
+			});
+
+			const normalizrs = mongooseNormalizr(schemas);
+
+			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
+
+			expect(normalized).toHaveProperty('entities.foos.1.bars', [{ id: 2 }]);
+			expect(normalized).not.toHaveProperty('entities.bars.2');
+		});
+
 		it('ignores unspecified schemas', () => {
 			const schemas = {
 				Foo: mongoose.Schema({ barId: { type: String } }),
@@ -242,9 +263,9 @@ describe('mongoose-normalizr', () => {
 
 			const normalizrs = mongooseNormalizr(schemas);
 
-			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
+			expect(normalized).toHaveProperty('entities.foos.1.bars', [{ id: 2 }]);
 			expect(normalized).not.toHaveProperty('entities.bars.2');
 		});
 	});

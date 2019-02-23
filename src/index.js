@@ -31,6 +31,7 @@ function createDefinition(tree, options, normalizrSchemas) {
 			const {
 				constructor,
 				options: {
+					count,
 					foreignField,
 					justOne,
 					localField,
@@ -49,7 +50,7 @@ function createDefinition(tree, options, normalizrSchemas) {
 			}
 
 			if (constructor === VirtualType) {
-				if (!ref || !localField || !foreignField) {
+				if (!ref || !localField || !foreignField || count) {
 					return null;
 				}
 				const normalizrSchema = getNormalizrSchema(ref, options, normalizrSchemas);
