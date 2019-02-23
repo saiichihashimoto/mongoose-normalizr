@@ -131,13 +131,13 @@ describe('mongoose-normalizr', () => {
 			const BarSchema = mongoose.Schema({});
 
 			const normalizrs = mongooseNormalizr({
-				Foo: mongoose.Schema({ bar: BarSchema }),
+				Foo: mongoose.Schema({ bars: [BarSchema] }),
 				Bar: BarSchema,
 			});
 
-			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
+			expect(normalized).toHaveProperty('entities.foos.1.bars', [2]);
 			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
 		});
 
@@ -145,14 +145,46 @@ describe('mongoose-normalizr', () => {
 			const BarSchema = mongoose.Schema({});
 
 			const normalizrs = mongooseNormalizr({
-				Foo: mongoose.Schema({ bar: BarSchema }),
+				Foo: mongoose.Schema({ bars: [BarSchema] }),
 			});
 
-			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
+			expect(normalized).toHaveProperty('entities.foos.1.bars', [{ id: 2 }]);
 			expect(normalized).not.toHaveProperty('entities.bars.2');
 		});
+
+		if (semver.satisfies(mongooseVersion, '>=4.2.0')) {
+			// Single-nested schemas only available >= 4.2.0
+			// https://github.com/Automattic/mongoose/blob/af4c62cd3c904947639663d2b1f3d59e5b1abcc8/docs/subdocs.jade#L31
+
+			it('references single-nested schemas', () => {
+				const BarSchema = mongoose.Schema({});
+
+				const normalizrs = mongooseNormalizr({
+					Foo: mongoose.Schema({ bar: BarSchema }),
+					Bar: BarSchema,
+				});
+
+				const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+
+				expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
+				expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+			});
+
+			it('ignores unspecified single-nested schemas', () => {
+				const BarSchema = mongoose.Schema({});
+
+				const normalizrs = mongooseNormalizr({
+					Foo: mongoose.Schema({ bar: BarSchema }),
+				});
+
+				const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+
+				expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
+				expect(normalized).not.toHaveProperty('entities.bars.2');
+			});
+		}
 	});
 
 	describe('populate virtuals', () => {
