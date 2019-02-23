@@ -181,7 +181,7 @@ describe('mongoose-normalizr', () => {
 
 				const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-				expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
+				expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
 				expect(normalized).not.toHaveProperty('entities.bars.2');
 			});
 		}
