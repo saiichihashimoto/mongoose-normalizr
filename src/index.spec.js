@@ -553,7 +553,7 @@ describe('mongoose-normalizr', () => {
 			mongoose.models = {};
 		});
 
-		if (semver.satisfies(normalizrVersion, '>=2.0.0')) {
+		if (semver.satisfies(mongooseVersion, '^4.13.10 || >=5.0.2') && semver.satisfies(normalizrVersion, '>=2.0.0')) {
 			it('generates unions', () => {
 				const schemas = {
 					Foo: mongoose.Schema({}),
