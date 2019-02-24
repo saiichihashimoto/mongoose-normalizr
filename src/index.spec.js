@@ -141,7 +141,7 @@ describe('mongoose-normalizr', () => {
 				foos: {
 					1: {
 						id:   1,
-						bars: [2],
+						bars: semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 },
 					},
 				},
 				bars: {
@@ -481,6 +481,68 @@ describe('mongoose-normalizr', () => {
 				},
 			});
 		});
+	});
+
+	describe('Dynamic References', () => {
+		if (semver.satisfies(normalizrVersion, '>=3.0.0')) {
+			it('generates unions', () => {
+				const normalizrs = mongooseNormalizr({
+					Foo: mongoose.Schema({
+						bar:      { refPath: 'barModel', type: mongoose.Schema.Types.ObjectId },
+						barModel: { type: String },
+					}),
+					Bar: mongoose.Schema({}),
+				});
+
+				const normalized = normalize({ id: 1, bar: { id: 2 }, barModel: 'Bar' }, normalizrs.foos);
+
+				expect(normalized).toEqual({
+					result:   1,
+					entities: {
+						foos: {
+							1: {
+								id:  1,
+								bar: {
+									id:     2,
+									schema: 'Bar',
+								},
+								barModel: 'Bar',
+							},
+						},
+						bars: {
+							2: {
+								id: 2,
+							},
+						},
+					},
+				});
+			});
+		} else {
+			it('doesn\'t generate unions', () => {
+				const normalizrs = mongooseNormalizr({
+					Foo: mongoose.Schema({
+						bar:      { refPath: 'barModel', type: mongoose.Schema.Types.ObjectId },
+						barModel: { type: String },
+					}),
+					Bar: mongoose.Schema({}),
+				});
+
+				const normalized = normalize({ id: 1, bar: { id: 2 }, barModel: 'Bar' }, normalizrs.foos);
+
+				expect(normalized).toEqual({
+					result:   1,
+					entities: {
+						foos: {
+							1: {
+								id:       1,
+								bar:      { id: 2 },
+								barModel: 'Bar',
+							},
+						},
+					},
+				});
+			});
+		}
 	});
 
 	if (semver.satisfies(mongooseVersion, '>=5.0.2')) {

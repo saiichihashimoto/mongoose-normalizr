@@ -10,6 +10,11 @@ function mapValue(fn) {
 	return ([key, value]) => [key, fn(value)];
 }
 
+const {
+	Entity = NormalizrPre3Schema,
+	Union,
+} = normalizr || {};
+
 function getNormalizrSchema(
 	modelName,
 	{
@@ -30,14 +35,15 @@ function createDefinition(tree, options, normalizrSchemas) {
 		.map(mapValue((subTree) => {
 			const {
 				constructor,
+				ref,
+				refPath,
 				options: {
 					count,
 					foreignField,
 					justOne,
 					localField,
-					ref,
+					ref: refOption,
 				} = {},
-				ref: subTreeRef,
 			} = subTree;
 
 			if (constructor === Schema) {
@@ -50,15 +56,19 @@ function createDefinition(tree, options, normalizrSchemas) {
 			}
 
 			if (constructor === VirtualType) {
-				if (!ref || !localField || !foreignField || count) {
+				if (!refOption || !localField || !foreignField || count) {
 					return null;
 				}
-				const normalizrSchema = getNormalizrSchema(ref, options, normalizrSchemas);
+				const normalizrSchema = getNormalizrSchema(refOption, options, normalizrSchemas);
 				return normalizrSchema && (justOne ? normalizrSchema : [normalizrSchema]);
 			}
 
-			if (subTreeRef) {
-				return getNormalizrSchema(subTreeRef, options, normalizrSchemas);
+			if (refPath && Union) {
+				return new Union(normalizrSchemas, (value, parent) => parent[refPath]);
+			}
+
+			if (ref) {
+				return getNormalizrSchema(ref, options, normalizrSchemas);
 			}
 
 			const definition = createDefinition(subTree, options, normalizrSchemas);
@@ -67,11 +77,6 @@ function createDefinition(tree, options, normalizrSchemas) {
 		.filter(([, definition]) => definition)
 		.reduce(reduceEntries, null);
 }
-
-const {
-	Entity = NormalizrPre3Schema,
-	Union,
-} = normalizr || {};
 
 const union = (
 	(unionOf && ((schemas, schemaAttribute) => unionOf(schemas, { schemaAttribute }))) ||
