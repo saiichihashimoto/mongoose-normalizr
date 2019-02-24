@@ -124,7 +124,7 @@ export default (input) => {
 			...normalizrEntities,
 			...Object.entries(options)
 				.filter(([, { reference }]) => reference)
-				.filter(([, { mongooseSchema: { discriminators } }]) => discriminators)
+				.filter(([, { mongooseSchema: { discriminatorMapping } }]) => discriminatorMapping)
 				.map(mapValue(({ mongooseSchema: { options: { discriminatorKey } = {} } }) => (
 					union(normalizrEntities, discriminatorKey)
 				)))

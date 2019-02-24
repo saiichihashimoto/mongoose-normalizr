@@ -245,7 +245,7 @@ describe('mongoose-normalizr', () => {
 		});
 	});
 
-	describe('subdocuments', () => {
+	describe('Subdocuments', () => {
 		it('references schemas', () => {
 			const BarSchema = mongoose.Schema({});
 
@@ -354,7 +354,7 @@ describe('mongoose-normalizr', () => {
 		}
 	});
 
-	describe('populate virtuals', () => {
+	describe('Populate Virtuals', () => {
 		it('references schemas', () => {
 			const schemas = {
 				Foo: mongoose.Schema({ barId: { type: String } }),
@@ -545,8 +545,8 @@ describe('mongoose-normalizr', () => {
 		}
 	});
 
-	if (semver.satisfies(mongooseVersion, '>=5.0.2')) {
-		describe('discriminators', () => {
+	if (semver.satisfies(mongooseVersion, '>=3.7.4')) {
+		describe('Discriminators', () => {
 			afterEach(() => {
 				mongoose.connections[0].collections = {};
 				mongoose.connections[0].models = {};
@@ -581,31 +581,33 @@ describe('mongoose-normalizr', () => {
 					});
 				});
 
-				it('uses discriminatorKey', () => {
-					const schemas = {
-						Foo: mongoose.Schema({}, { discriminatorKey: 'type' }),
-						Bar: mongoose.Schema({}),
-					};
+				if (semver.satisfies(mongooseVersion, '>=4.7.3')) {
+					it('uses discriminatorKey', () => {
+						const schemas = {
+							Foo: mongoose.Schema({}, { discriminatorKey: 'type' }),
+							Bar: mongoose.Schema({}),
+						};
 
-					const FooModel = mongoose.model('Foo', schemas.Foo);
-					FooModel.discriminator('Bar', schemas.Bar);
+						const FooModel = mongoose.model('Foo', schemas.Foo);
+						FooModel.discriminator('Bar', schemas.Bar);
 
-					const normalizrs = mongooseNormalizr(schemas);
+						const normalizrs = mongooseNormalizr(schemas);
 
-					const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
+						const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toEqual({
-						result:   { id: 1, schema: 'Bar' },
-						entities: {
-							bars: {
-								1: {
-									id:   1,
-									type: 'Bar',
+						expect(normalized).toEqual({
+							result:   { id: 1, schema: 'Bar' },
+							entities: {
+								bars: {
+									1: {
+										id:   1,
+										type: 'Bar',
+									},
 								},
 							},
-						},
+						});
 					});
-				});
+				}
 
 				it('is disabled with enable=false', () => {
 					const schemas = {
