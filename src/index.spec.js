@@ -581,31 +581,33 @@ describe('mongoose-normalizr', () => {
 					});
 				});
 
-				it('uses discriminatorKey', () => {
-					const schemas = {
-						Foo: mongoose.Schema({}, { discriminatorKey: 'type' }),
-						Bar: mongoose.Schema({}),
-					};
+				if (semver.satisfies(mongooseVersion, '>=4.7.3')) {
+					it('uses discriminatorKey', () => {
+						const schemas = {
+							Foo: mongoose.Schema({}, { discriminatorKey: 'type' }),
+							Bar: mongoose.Schema({}),
+						};
 
-					const FooModel = mongoose.model('Foo', schemas.Foo);
-					FooModel.discriminator('Bar', schemas.Bar);
+						const FooModel = mongoose.model('Foo', schemas.Foo);
+						FooModel.discriminator('Bar', schemas.Bar);
 
-					const normalizrs = mongooseNormalizr(schemas);
+						const normalizrs = mongooseNormalizr(schemas);
 
-					const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
+						const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toEqual({
-						result:   { id: 1, schema: 'Bar' },
-						entities: {
-							bars: {
-								1: {
-									id:   1,
-									type: 'Bar',
+						expect(normalized).toEqual({
+							result:   { id: 1, schema: 'Bar' },
+							entities: {
+								bars: {
+									1: {
+										id:   1,
+										type: 'Bar',
+									},
 								},
 							},
-						},
+						});
 					});
-				});
+				}
 
 				it('is disabled with enable=false', () => {
 					const schemas = {
