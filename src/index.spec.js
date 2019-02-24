@@ -545,118 +545,120 @@ describe('mongoose-normalizr', () => {
 		}
 	});
 
-	describe('Discriminators', () => {
-		afterEach(() => {
-			mongoose.connections[0].collections = {};
-			mongoose.connections[0].models = {};
-			mongoose.modelSchemas = {};
-			mongoose.models = {};
+	if (semver.satisfies(mongooseVersion, '>=3.7.4')) {
+		describe('Discriminators', () => {
+			afterEach(() => {
+				mongoose.connections[0].collections = {};
+				mongoose.connections[0].models = {};
+				mongoose.modelSchemas = {};
+				mongoose.models = {};
+			});
+
+			if (semver.satisfies(mongooseVersion, '^4.13.10 || >=5.0.2') && semver.satisfies(normalizrVersion, '>=2.0.0')) {
+				it('generates unions', () => {
+					const schemas = {
+						Foo: mongoose.Schema({}),
+						Bar: mongoose.Schema({}),
+					};
+
+					const FooModel = mongoose.model('Foo', schemas.Foo);
+					FooModel.discriminator('Bar', schemas.Bar);
+
+					const normalizrs = mongooseNormalizr(schemas);
+
+					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
+
+					expect(normalized).toEqual({
+						result:   { id: 1, schema: 'Bar' },
+						entities: {
+							bars: {
+								1: {
+									id:  1,
+									__t: 'Bar',
+								},
+							},
+						},
+					});
+				});
+
+				it('uses discriminatorKey', () => {
+					const schemas = {
+						Foo: mongoose.Schema({}, { discriminatorKey: 'type' }),
+						Bar: mongoose.Schema({}),
+					};
+
+					const FooModel = mongoose.model('Foo', schemas.Foo);
+					FooModel.discriminator('Bar', schemas.Bar);
+
+					const normalizrs = mongooseNormalizr(schemas);
+
+					const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
+
+					expect(normalized).toEqual({
+						result:   { id: 1, schema: 'Bar' },
+						entities: {
+							bars: {
+								1: {
+									id:   1,
+									type: 'Bar',
+								},
+							},
+						},
+					});
+				});
+
+				it('is disabled with enable=false', () => {
+					const schemas = {
+						Foo: { enable: false, schema: mongoose.Schema({}) },
+						Bar: mongoose.Schema({}),
+					};
+
+					const FooModel = mongoose.model('Foo', schemas.Foo.schema);
+					FooModel.discriminator('Bar', schemas.Bar);
+
+					const normalizrs = mongooseNormalizr(schemas);
+
+					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
+
+					expect(normalized).toEqual({
+						result:   1,
+						entities: {
+							foos: {
+								1: {
+									id:  1,
+									__t: 'Bar',
+								},
+							},
+						},
+					});
+				});
+			} else {
+				it('doesn\'t generate unions', () => {
+					const schemas = {
+						Foo: mongoose.Schema({}),
+						Bar: mongoose.Schema({}),
+					};
+
+					const FooModel = mongoose.model('Foo', schemas.Foo);
+					FooModel.discriminator('Bar', schemas.Bar);
+
+					const normalizrs = mongooseNormalizr(schemas);
+
+					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
+
+					expect(normalized).toEqual({
+						result:   1,
+						entities: {
+							foos: {
+								1: {
+									id:  1,
+									__t: 'Bar',
+								},
+							},
+						},
+					});
+				});
+			}
 		});
-
-		if (semver.satisfies(mongooseVersion, '^4.13.10 || >=5.0.2') && semver.satisfies(normalizrVersion, '>=2.0.0')) {
-			it('generates unions', () => {
-				const schemas = {
-					Foo: mongoose.Schema({}),
-					Bar: mongoose.Schema({}),
-				};
-
-				const FooModel = mongoose.model('Foo', schemas.Foo);
-				FooModel.discriminator('Bar', schemas.Bar);
-
-				const normalizrs = mongooseNormalizr(schemas);
-
-				const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
-
-				expect(normalized).toEqual({
-					result:   { id: 1, schema: 'Bar' },
-					entities: {
-						bars: {
-							1: {
-								id:  1,
-								__t: 'Bar',
-							},
-						},
-					},
-				});
-			});
-
-			it('uses discriminatorKey', () => {
-				const schemas = {
-					Foo: mongoose.Schema({}, { discriminatorKey: 'type' }),
-					Bar: mongoose.Schema({}),
-				};
-
-				const FooModel = mongoose.model('Foo', schemas.Foo);
-				FooModel.discriminator('Bar', schemas.Bar);
-
-				const normalizrs = mongooseNormalizr(schemas);
-
-				const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
-
-				expect(normalized).toEqual({
-					result:   { id: 1, schema: 'Bar' },
-					entities: {
-						bars: {
-							1: {
-								id:   1,
-								type: 'Bar',
-							},
-						},
-					},
-				});
-			});
-
-			it('is disabled with enable=false', () => {
-				const schemas = {
-					Foo: { enable: false, schema: mongoose.Schema({}) },
-					Bar: mongoose.Schema({}),
-				};
-
-				const FooModel = mongoose.model('Foo', schemas.Foo.schema);
-				FooModel.discriminator('Bar', schemas.Bar);
-
-				const normalizrs = mongooseNormalizr(schemas);
-
-				const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
-
-				expect(normalized).toEqual({
-					result:   1,
-					entities: {
-						foos: {
-							1: {
-								id:  1,
-								__t: 'Bar',
-							},
-						},
-					},
-				});
-			});
-		} else {
-			it('doesn\'t generate unions', () => {
-				const schemas = {
-					Foo: mongoose.Schema({}),
-					Bar: mongoose.Schema({}),
-				};
-
-				const FooModel = mongoose.model('Foo', schemas.Foo);
-				FooModel.discriminator('Bar', schemas.Bar);
-
-				const normalizrs = mongooseNormalizr(schemas);
-
-				const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
-
-				expect(normalized).toEqual({
-					result:   1,
-					entities: {
-						foos: {
-							1: {
-								id:  1,
-								__t: 'Bar',
-							},
-						},
-					},
-				});
-			});
-		}
-	});
+	}
 });
