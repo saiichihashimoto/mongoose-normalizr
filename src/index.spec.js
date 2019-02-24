@@ -13,8 +13,16 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1 }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('result', 1);
-		expect(normalized).toHaveProperty('entities.foos.1.id', 1);
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id: 1,
+					},
+				},
+			},
+		});
 	});
 
 	it('uses schema options.collection for key', () => {
@@ -24,8 +32,16 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1 }, normalizrs.foo);
 
-		expect(normalized).toHaveProperty('result', 1);
-		expect(normalized).toHaveProperty('entities.foo.1.id', 1);
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foo: {
+					1: {
+						id: 1,
+					},
+				},
+			},
+		});
 	});
 
 	it('references schemas', () => {
@@ -36,8 +52,22 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
-		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:  1,
+						bar: 2,
+					},
+				},
+				bars: {
+					2: {
+						id: 2,
+					},
+				},
+			},
+		});
 	});
 
 	it('ignores unspecified schemas', () => {
@@ -49,6 +79,19 @@ describe('mongoose-normalizr', () => {
 
 		expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
 		expect(normalized).not.toHaveProperty('entities.bars.2');
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:  1,
+						bar: {
+							id: 2,
+						},
+					},
+				},
+			},
+		});
 	});
 
 	it('traverses into objects', () => {
@@ -62,8 +105,26 @@ describe('mongoose-normalizr', () => {
 			normalizrs.foos,
 		);
 
-		expect(normalized).toHaveProperty('entities.foos.1.child.grandchild.bar', 2);
-		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:    1,
+						child: {
+							grandchild: {
+								bar: 2,
+							},
+						},
+					},
+				},
+				bars: {
+					2: {
+						id: 2,
+					},
+				},
+			},
+		});
 	});
 
 	it('traverses into arrays', () => {
@@ -74,8 +135,22 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('entities.foos.1.bars', semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 });
-		expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:   1,
+						bars: semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 },
+					},
+				},
+				bars: {
+					2: {
+						id: 2,
+					},
+				},
+			},
+		});
 	});
 
 	it('ignores references if define=false', () => {
@@ -86,8 +161,19 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
-		expect(normalized).not.toHaveProperty('entities.bars.2');
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:  1,
+						bar: {
+							id: 2,
+						},
+					},
+				},
+			},
+		});
 	});
 
 	it('ignores references if enable=false', () => {
@@ -98,8 +184,19 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
-		expect(normalized).not.toHaveProperty('entities.bars.2');
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:  1,
+						bar: {
+							id: 2,
+						},
+					},
+				},
+			},
+		});
 	});
 
 	it('won\'t be referenced if reference=false', () => {
@@ -110,8 +207,19 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
-		expect(normalized).not.toHaveProperty('entities.bars.2');
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:  1,
+						bar: {
+							id: 2,
+						},
+					},
+				},
+			},
+		});
 	});
 
 	it('won\'t be referenced if enable=false', () => {
@@ -122,8 +230,19 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
-		expect(normalized).not.toHaveProperty('entities.bars.2');
+		expect(normalized).toEqual({
+			result:   1,
+			entities: {
+				foos: {
+					1: {
+						id:  1,
+						bar: {
+							id: 2,
+						},
+					},
+				},
+			},
+		});
 	});
 
 	describe('subdocuments', () => {
@@ -137,8 +256,22 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bars', semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 });
-			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+			expect(normalized).toEqual({
+				result:   1,
+				entities: {
+					foos: {
+						1: {
+							id:   1,
+							bars: semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 },
+						},
+					},
+					bars: {
+						2: {
+							id: 2,
+						},
+					},
+				},
+			});
 		});
 
 		it('ignores unspecified schemas', () => {
@@ -150,8 +283,17 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bars', [{ id: 2 }]);
-			expect(normalized).not.toHaveProperty('entities.bars.2');
+			expect(normalized).toEqual({
+				result:   1,
+				entities: {
+					foos: {
+						1: {
+							id:   1,
+							bars: [{ id: 2 }],
+						},
+					},
+				},
+			});
 		});
 
 		if (semver.satisfies(mongooseVersion, '>=4.2.0')) {
@@ -168,8 +310,22 @@ describe('mongoose-normalizr', () => {
 
 				const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-				expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
-				expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+				expect(normalized).toEqual({
+					result:   1,
+					entities: {
+						foos: {
+							1: {
+								id:  1,
+								bar: 2,
+							},
+						},
+						bars: {
+							2: {
+								id: 2,
+							},
+						},
+					},
+				});
 			});
 
 			it('ignores unspecified single-nested schemas', () => {
@@ -181,8 +337,19 @@ describe('mongoose-normalizr', () => {
 
 				const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-				expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
-				expect(normalized).not.toHaveProperty('entities.bars.2');
+				expect(normalized).toEqual({
+					result:   1,
+					entities: {
+						foos: {
+							1: {
+								id:  1,
+								bar: {
+									id: 2,
+								},
+							},
+						},
+					},
+				});
 			});
 		}
 	});
@@ -204,11 +371,25 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bars', semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 });
-			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+			expect(normalized).toEqual({
+				result:   1,
+				entities: {
+					foos: {
+						1: {
+							id:   1,
+							bars: semver.satisfies(normalizrVersion, '>=3.0.0') ? [2] : { 0: 2 },
+						},
+					},
+					bars: {
+						2: {
+							id: 2,
+						},
+					},
+				},
+			});
 		});
 
-		it('respects justOne', () => {
+		it('references one schema if justOne=true', () => {
 			const schemas = {
 				Foo: mongoose.Schema({ barId: { type: String } }),
 				Bar: mongoose.Schema({ fooId: { type: String } }),
@@ -225,8 +406,52 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bar', 2);
-			expect(normalized).toHaveProperty('entities.bars.2.id', 2);
+			expect(normalized).toEqual({
+				result:   1,
+				entities: {
+					foos: {
+						1: {
+							id:  1,
+							bar: 2,
+						},
+					},
+					bars: {
+						2: {
+							id: 2,
+						},
+					},
+				},
+			});
+		});
+
+		it('ignores if count=true', () => {
+			const schemas = {
+				Foo: mongoose.Schema({ barId: { type: String } }),
+				Bar: mongoose.Schema({ fooId: { type: String } }),
+			};
+
+			schemas.Foo.virtual('bars', {
+				ref:          'Bar',
+				localField:   'barId',
+				foreignField: 'fooId',
+				count:        true,
+			});
+
+			const normalizrs = mongooseNormalizr(schemas);
+
+			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
+
+			expect(normalized).toEqual({
+				result:   1,
+				entities: {
+					foos: {
+						1: {
+							id:   1,
+							bars: [{ id: 2 }],
+						},
+					},
+				},
+			});
 		});
 
 		it('ignores unspecified schemas', () => {
@@ -242,11 +467,82 @@ describe('mongoose-normalizr', () => {
 
 			const normalizrs = mongooseNormalizr(schemas);
 
-			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
+			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toHaveProperty('entities.foos.1.bar', { id: 2 });
-			expect(normalized).not.toHaveProperty('entities.bars.2');
+			expect(normalized).toEqual({
+				result:   1,
+				entities: {
+					foos: {
+						1: {
+							id:   1,
+							bars: [{ id: 2 }],
+						},
+					},
+				},
+			});
 		});
+	});
+
+	describe('Dynamic References', () => {
+		if (semver.satisfies(normalizrVersion, '>=3.0.0')) {
+			it('generates unions', () => {
+				const normalizrs = mongooseNormalizr({
+					Foo: mongoose.Schema({
+						bar:      { refPath: 'barModel', type: mongoose.Schema.Types.ObjectId },
+						barModel: { type: String },
+					}),
+					Bar: mongoose.Schema({}),
+				});
+
+				const normalized = normalize({ id: 1, bar: { id: 2 }, barModel: 'Bar' }, normalizrs.foos);
+
+				expect(normalized).toEqual({
+					result:   1,
+					entities: {
+						foos: {
+							1: {
+								id:  1,
+								bar: {
+									id:     2,
+									schema: 'Bar',
+								},
+								barModel: 'Bar',
+							},
+						},
+						bars: {
+							2: {
+								id: 2,
+							},
+						},
+					},
+				});
+			});
+		} else {
+			it('doesn\'t generate unions', () => {
+				const normalizrs = mongooseNormalizr({
+					Foo: mongoose.Schema({
+						bar:      { refPath: 'barModel', type: mongoose.Schema.Types.ObjectId },
+						barModel: { type: String },
+					}),
+					Bar: mongoose.Schema({}),
+				});
+
+				const normalized = normalize({ id: 1, bar: { id: 2 }, barModel: 'Bar' }, normalizrs.foos);
+
+				expect(normalized).toEqual({
+					result:   1,
+					entities: {
+						foos: {
+							1: {
+								id:       1,
+								bar:      { id: 2 },
+								barModel: 'Bar',
+							},
+						},
+					},
+				});
+			});
+		}
 	});
 
 	if (semver.satisfies(mongooseVersion, '>=5.0.2')) {
@@ -272,9 +568,17 @@ describe('mongoose-normalizr', () => {
 
 					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toHaveProperty('result', { id: 1, schema: 'Bar' });
-					expect(normalized).not.toHaveProperty('entities.foos');
-					expect(normalized).toHaveProperty('entities.bars.1', { id: 1, __t: 'Bar' });
+					expect(normalized).toEqual({
+						result:   { id: 1, schema: 'Bar' },
+						entities: {
+							bars: {
+								1: {
+									id:  1,
+									__t: 'Bar',
+								},
+							},
+						},
+					});
 				});
 
 				it('uses discriminatorKey', () => {
@@ -290,7 +594,17 @@ describe('mongoose-normalizr', () => {
 
 					const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toHaveProperty('entities.bars.1', { id: 1, type: 'Bar' });
+					expect(normalized).toEqual({
+						result:   { id: 1, schema: 'Bar' },
+						entities: {
+							bars: {
+								1: {
+									id:   1,
+									type: 'Bar',
+								},
+							},
+						},
+					});
 				});
 
 				it('is disabled with enable=false', () => {
@@ -306,7 +620,17 @@ describe('mongoose-normalizr', () => {
 
 					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).not.toHaveProperty('entities.bars');
+					expect(normalized).toEqual({
+						result:   1,
+						entities: {
+							foos: {
+								1: {
+									id:  1,
+									__t: 'Bar',
+								},
+							},
+						},
+					});
 				});
 			} else {
 				it('doesn\'t generate unions', () => {
@@ -322,9 +646,17 @@ describe('mongoose-normalizr', () => {
 
 					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toHaveProperty('result', 1);
-					expect(normalized).toHaveProperty('entities.foos.1', { id: 1, __t: 'Bar' });
-					expect(normalized).not.toHaveProperty('entities.bars');
+					expect(normalized).toEqual({
+						result:   1,
+						entities: {
+							foos: {
+								1: {
+									id:  1,
+									__t: 'Bar',
+								},
+							},
+						},
+					});
 				});
 			}
 		});
