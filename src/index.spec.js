@@ -245,7 +245,7 @@ describe('mongoose-normalizr', () => {
 		});
 	});
 
-	describe('subdocuments', () => {
+	describe('Subdocuments', () => {
 		it('references schemas', () => {
 			const BarSchema = mongoose.Schema({});
 
@@ -354,7 +354,7 @@ describe('mongoose-normalizr', () => {
 		}
 	});
 
-	describe('populate virtuals', () => {
+	describe('Populate Virtuals', () => {
 		it('references schemas', () => {
 			const schemas = {
 				Foo: mongoose.Schema({ barId: { type: String } }),
@@ -545,7 +545,7 @@ describe('mongoose-normalizr', () => {
 		}
 	});
 
-	describe('discriminators', () => {
+	describe('Discriminators', () => {
 		afterEach(() => {
 			mongoose.connections[0].collections = {};
 			mongoose.connections[0].models = {};
@@ -553,7 +553,7 @@ describe('mongoose-normalizr', () => {
 			mongoose.models = {};
 		});
 
-		if (semver.satisfies(mongooseVersion, '>=5.0.2') && semver.satisfies(normalizrVersion, '>=2.0.0')) {
+		if (semver.satisfies(normalizrVersion, '>=2.0.0')) {
 			it('generates unions', () => {
 				const schemas = {
 					Foo: mongoose.Schema({}),
