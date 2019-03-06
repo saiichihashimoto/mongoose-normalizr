@@ -94,7 +94,9 @@ console.log('normalized:', normalizr.normalize(denormalizedFoo, normalizrs.foos)
 - Traverses arrays and objects to find deep references.
 - Supports [Subdocuments](http://mongoosejs.com/docs/subdocs.html).
 - Supports [Populateable Virtuals](http://mongoosejs.com/docs/populate.html#populate-virtuals).
-- Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html) from mongoose^5.0.2
+- Supports [Dynamic References](https://mongoosejs.com/docs/populate.html#dynamic-ref).
+  - It does this by generating normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute). *Unions don't [normalize to an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.*
+- Supports [Discriminators](http://mongoosejs.com/docs/discriminators.html).
   - It does this by generating normalizr [Unions](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#uniondefinition-schemaattribute). *Unions don't [normalize to an id](https://github.com/paularmstrong/normalizr/blob/master/docs/api.md#usage-5) like Entities do.*
 - Works on *all* versions of normalizr, all the way back to `0.1.1`.
 
