@@ -42,12 +42,12 @@
     "@babel/core": "7.4.5",
     "@babel/preset-env": "7.4.5",
     "cz-conventional-changelog": "2.1.0",
-    "eslint-config-saiichihashimoto": "1.2.23",
-    "husky": "2.3.0",
+    "eslint-config-saiichihashimoto": "1.2.24",
+    "husky": "2.4.1",
     "jest": "24.1.0",
-    "lint-my-app": "3.3.26",
+    "lint-my-app": "3.3.27",
     "mongoose": "5.5.10",
-    "normalizr": "3.3.0",
+    "normalizr": "3.4.0",
     "semver": "6.1.1"
   },
   "peerDependencies": {
