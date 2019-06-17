@@ -48,7 +48,7 @@
     "lint-my-app": "3.3.27",
     "mongoose": "5.5.10",
     "normalizr": "3.4.0",
-    "semver": "6.0.0"
+    "semver": "6.1.1"
   },
   "peerDependencies": {
     "mongoose": ">=3.2.2 <3.9.0 || >=4.0.3 <6.0.0",
