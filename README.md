@@ -1,6 +1,6 @@
 [![current version](https://img.shields.io/npm/v/mongoose-normalizr.svg)](https://www.npmjs.com/package/mongoose-normalizr)
 [![Build Status](https://travis-ci.org/saiichihashimoto/mongoose-normalizr.svg?branch=master)](https://travis-ci.org/saiichihashimoto/mongoose-normalizr)
-[![codecov](https://codecov.io/gh/saiichihashimoto/mongoose-normalizr/branch/master/graph/badge.svg)](https://codecov.io/gh/saiichihashimoto/mongoose-normalizr)
+[![Coverage Status](https://coveralls.io/repos/github/saiichihashimoto/mongoose-normalizr/badge.svg?branch=master)](https://coveralls.io/github/saiichihashimoto/mongoose-normalizr?branch=master)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Greenkeeper badge](https://badges.greenkeeper.io/saiichihashimoto/mongoose-normalizr.svg)](https://greenkeeper.io/)
