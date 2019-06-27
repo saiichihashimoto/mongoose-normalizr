@@ -9,9 +9,7 @@ after_success:
 jobs:
   include:
     - stage: test
-
-    - stage: mongoose
-      env: MONGOOSE_VERSION="5.0.0"
+    - env: MONGOOSE_VERSION="5.0.0"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
     - env: MONGOOSE_VERSION="^4.0.0"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
@@ -21,9 +19,7 @@ jobs:
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
     - env: MONGOOSE_VERSION="3.2.2"
       before_script: npm install mongoose@"$MONGOOSE_VERSION"
-
-    - stage: normalizr
-      env: NORMALIZR_VERSION="3.0.0"
+    - env: NORMALIZR_VERSION="3.0.0"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
     - env: NORMALIZR_VERSION="^2.0.0"
       before_script: npm install normalizr@"$NORMALIZR_VERSION"
