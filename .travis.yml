@@ -8,7 +8,7 @@ branches:
   except:
     - /^v\d+\.\d+\.\d+$/
 after_success:
-  - cat ./coverage/lcov.info | npx coveralls
+  - cat ./coverage/lcov.info | npx coveralls --verbose
 jobs:
   include:
     - stage: test
