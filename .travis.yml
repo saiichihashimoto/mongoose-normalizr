@@ -3,7 +3,10 @@ node_js:
   - 11.10
 notifications:
   email:
-    - saiichihashimoto@gmail.com
+    recipients:
+      - saiichihashimoto@gmail.com
+    on_success: never
+    on_failure: always
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
