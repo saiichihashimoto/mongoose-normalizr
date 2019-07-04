@@ -1,4 +1,5 @@
 language: node_js
+cache: npm
 node_js:
   - 11.10
 branches:
@@ -10,39 +11,31 @@ notifications:
       - saiichihashimoto@gmail.com
     on_success: never
     on_failure: always
+env:
+  -
+  - MONGOOSE_VERSION="5.0.0"
+  - MONGOOSE_VERSION="^4.0.0"
+  - MONGOOSE_VERSION="4.0.4"
+  - MONGOOSE_VERSION="~3.8.0"
+  - MONGOOSE_VERSION="3.2.2"
+  - NORMALIZR_VERSION="3.0.0"
+  - NORMALIZR_VERSION="^2.0.0"
+  - NORMALIZR_VERSION="2.0.0"
+  - NORMALIZR_VERSION="^1.0.0"
+  - NORMALIZR_VERSION="1.0.0"
+  - NORMALIZR_VERSION="^0.1.1"
+  - NORMALIZR_VERSION="0.1.1"
+before_script:
+  - if [[ $MONGOOSE_VERSION ]] ; then npm install mongoose@"$MONGOOSE_VERSION" --no-save; fi
+  - if [[ $NORMALIZR_VERSION ]] ; then npm install normalizr@"$NORMALIZR_VERSION" --no-save; fi
 after_success:
-  - cat ./coverage/lcov.info | npx coveralls --verbose
+  - cat ./coverage/lcov.info | npx coveralls
 jobs:
   include:
-    - stage: test
-    - env: MONGOOSE_VERSION="5.0.0"
-      before_script: npm install mongoose@"$MONGOOSE_VERSION"
-    - env: MONGOOSE_VERSION="^4.0.0"
-      before_script: npm install mongoose@"$MONGOOSE_VERSION"
-    - env: MONGOOSE_VERSION="4.0.4"
-      before_script: npm install mongoose@"$MONGOOSE_VERSION"
-    - env: MONGOOSE_VERSION="~3.8.0"
-      before_script: npm install mongoose@"$MONGOOSE_VERSION"
-    - env: MONGOOSE_VERSION="3.2.2"
-      before_script: npm install mongoose@"$MONGOOSE_VERSION"
-    - env: NORMALIZR_VERSION="3.0.0"
-      before_script: npm install normalizr@"$NORMALIZR_VERSION"
-    - env: NORMALIZR_VERSION="^2.0.0"
-      before_script: npm install normalizr@"$NORMALIZR_VERSION"
-    - env: NORMALIZR_VERSION="2.0.0"
-      before_script: npm install normalizr@"$NORMALIZR_VERSION"
-    - env: NORMALIZR_VERSION="^1.0.0"
-      before_script: npm install normalizr@"$NORMALIZR_VERSION"
-    - env: NORMALIZR_VERSION="1.0.0"
-      before_script: npm install normalizr@"$NORMALIZR_VERSION"
-    - env: NORMALIZR_VERSION="^0.1.1"
-      before_script: npm install normalizr@"$NORMALIZR_VERSION"
-    - env: NORMALIZR_VERSION="0.1.1"
-      before_script: npm install normalizr@"$NORMALIZR_VERSION"
-
     - stage: release
-      if: branch = master
+      if: branch = master && type = push
       node_js: lts/*
+      script: skip
       deploy:
         provider: script
         skip_cleanup: true
