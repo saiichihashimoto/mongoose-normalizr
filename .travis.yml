@@ -1,15 +1,15 @@
 language: node_js
 node_js:
   - 11.10
+branches:
+  only:
+    - master
 notifications:
   email:
     recipients:
       - saiichihashimoto@gmail.com
     on_success: never
     on_failure: always
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
 after_success:
   - cat ./coverage/lcov.info | npx coveralls --verbose
 jobs:
