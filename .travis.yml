@@ -12,7 +12,7 @@ notifications:
     on_success: never
     on_failure: always
 after_success:
-  - cat ./coverage/lcov.info | npx coveralls --verbose
+  - cat ./coverage/lcov.info | npx coveralls
 jobs:
   include:
     - stage: test
