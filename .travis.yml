@@ -1,15 +1,16 @@
 language: node_js
+cache: npm
 node_js:
   - 11.10
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
 notifications:
   email:
     recipients:
       - saiichihashimoto@gmail.com
     on_success: never
     on_failure: always
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
 after_success:
   - cat ./coverage/lcov.info | npx coveralls --verbose
 jobs:
