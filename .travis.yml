@@ -26,15 +26,16 @@ env:
   - NORMALIZR_VERSION="^0.1.1"
   - NORMALIZR_VERSION="0.1.1"
 before_script:
-  - [ ! -z "$MONGOOSE_VERSION" ] && npm install mongoose@"$MONGOOSE_VERSION" --no-save
-  - [ ! -z "$NORMALIZR_VERSION" ] && npm install normalizr@"$NORMALIZR_VERSION" --no-save
+  - if [[ $MONGOOSE_VERSION ]] ; then npm install mongoose@"$MONGOOSE_VERSION" --no-save; fi
+  - if [[ $NORMALIZR_VERSION ]] ; then npm install normalizr@"$NORMALIZR_VERSION" --no-save; fi
 after_success:
   - cat ./coverage/lcov.info | npx coveralls
 jobs:
   include:
     - stage: release
-      if: branch = master
+      if: branch = master && type = push
       node_js: lts/*
+      script: skip
       deploy:
         provider: script
         skip_cleanup: true
