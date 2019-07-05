@@ -1,1 +1,6 @@
 _extends: .github
+branches:
+  - name: master
+    protection:
+      required_status_checks:
+        contexts: ['Semantic Pull Request', 'WIP', 'continuous-integration/travis-ci', 'coverage/coveralls']
