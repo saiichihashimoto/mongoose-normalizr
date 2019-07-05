@@ -2,6 +2,10 @@ import pluralize from 'mongoose-legacy-pluralize';
 import { Schema, VirtualType } from 'mongoose';
 import { schema as normalizr, Schema as NormalizrPre3Schema, unionOf } from 'normalizr';
 
+// TODO Handle mongoose@1.0.0
+// TODO Handle mongoose@2.0.0
+// TODO Handle mongoose@3.0.0
+
 function reduceEntries(acc, [key, value]) {
 	return { ...acc, [key]: value };
 }
