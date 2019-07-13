@@ -1,7 +1,5 @@
 language: node_js
 cache: npm
-node_js:
-  - 11.10
 branches:
   only:
     - master
@@ -30,12 +28,17 @@ before_script:
   - if [[ $NORMALIZR_VERSION ]] ; then npm install normalizr@"$NORMALIZR_VERSION" --no-save; fi
 after_success:
   - cat ./coverage/lcov.info | npx coveralls
+stages:
+  - name: test
+    if: type = pull_request
+  - name: release
+    if: type = push
 jobs:
   include:
     - stage: release
-      if: branch = master && type = push
-      node_js: lts/*
+      before_script: true
       script: skip
+      after_success: true
       deploy:
         provider: script
         skip_cleanup: true
