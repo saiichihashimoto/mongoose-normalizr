@@ -42,7 +42,7 @@
     "@babel/core": "7.5.5",
     "@babel/preset-env": "7.5.5",
     "cz-conventional-changelog": "3.0.2",
-    "eslint-config-saiichihashimoto": "1.3.10",
+    "eslint-config-saiichihashimoto": "2.0.0",
     "husky": "3.0.1",
     "jest": "24.1.0",
     "lint-my-app": "3.4.2",
