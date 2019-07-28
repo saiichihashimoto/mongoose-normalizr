@@ -3,6 +3,7 @@ import semver from 'semver';
 import { normalize } from 'normalizr';
 import { version as mongooseVersion } from 'mongoose/package';
 import { version as normalizrVersion } from 'normalizr/package';
+
 import mongooseNormalizr from '.';
 
 describe('mongoose-normalizr', () => {
@@ -13,7 +14,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1 }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -32,7 +33,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1 }, normalizrs.foo);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foo: {
@@ -52,7 +53,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -77,7 +78,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -100,10 +101,10 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize(
 			{ id: 1, child: { grandchild: { bar: { id: 2 } } } },
-			normalizrs.foos,
+			normalizrs.foos
 		);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -133,7 +134,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -159,7 +160,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -182,7 +183,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -205,7 +206,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -228,7 +229,7 @@ describe('mongoose-normalizr', () => {
 
 		const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-		expect(normalized).toEqual({
+		expect(normalized).toStrictEqual({
 			result:   1,
 			entities: {
 				foos: {
@@ -254,7 +255,7 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toEqual({
+			expect(normalized).toStrictEqual({
 				result:   1,
 				entities: {
 					foos: {
@@ -281,7 +282,7 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toEqual({
+			expect(normalized).toStrictEqual({
 				result:   1,
 				entities: {
 					foos: {
@@ -295,8 +296,10 @@ describe('mongoose-normalizr', () => {
 		});
 
 		if (semver.satisfies(mongooseVersion, '>=4.2.0')) {
-			// Single-nested schemas only available >= 4.2.0
-			// https://github.com/Automattic/mongoose/blob/af4c62cd3c904947639663d2b1f3d59e5b1abcc8/docs/subdocs.jade#L31
+			/*
+			 * Single-nested schemas only available >= 4.2.0
+			 * https://github.com/Automattic/mongoose/blob/af4c62cd3c904947639663d2b1f3d59e5b1abcc8/docs/subdocs.jade#L31
+			 */
 
 			it('references single-nested schemas', () => {
 				const BarSchema = mongoose.Schema({});
@@ -308,7 +311,7 @@ describe('mongoose-normalizr', () => {
 
 				const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-				expect(normalized).toEqual({
+				expect(normalized).toStrictEqual({
 					result:   1,
 					entities: {
 						foos: {
@@ -335,7 +338,7 @@ describe('mongoose-normalizr', () => {
 
 				const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-				expect(normalized).toEqual({
+				expect(normalized).toStrictEqual({
 					result:   1,
 					entities: {
 						foos: {
@@ -369,7 +372,7 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toEqual({
+			expect(normalized).toStrictEqual({
 				result:   1,
 				entities: {
 					foos: {
@@ -404,7 +407,7 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bar: { id: 2 } }, normalizrs.foos);
 
-			expect(normalized).toEqual({
+			expect(normalized).toStrictEqual({
 				result:   1,
 				entities: {
 					foos: {
@@ -439,7 +442,7 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toEqual({
+			expect(normalized).toStrictEqual({
 				result:   1,
 				entities: {
 					foos: {
@@ -467,7 +470,7 @@ describe('mongoose-normalizr', () => {
 
 			const normalized = normalize({ id: 1, bars: [{ id: 2 }] }, normalizrs.foos);
 
-			expect(normalized).toEqual({
+			expect(normalized).toStrictEqual({
 				result:   1,
 				entities: {
 					foos: {
@@ -494,7 +497,7 @@ describe('mongoose-normalizr', () => {
 
 				const normalized = normalize({ id: 1, bar: { id: 2 }, barModel: 'Bar' }, normalizrs.foos);
 
-				expect(normalized).toEqual({
+				expect(normalized).toStrictEqual({
 					result:   1,
 					entities: {
 						foos: {
@@ -527,7 +530,7 @@ describe('mongoose-normalizr', () => {
 
 				const normalized = normalize({ id: 1, bar: { id: 2 }, barModel: 'Bar' }, normalizrs.foos);
 
-				expect(normalized).toEqual({
+				expect(normalized).toStrictEqual({
 					result:   1,
 					entities: {
 						foos: {
@@ -566,7 +569,7 @@ describe('mongoose-normalizr', () => {
 
 					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toEqual({
+					expect(normalized).toStrictEqual({
 						result:   { id: 1, schema: 'Bar' },
 						entities: {
 							bars: {
@@ -593,7 +596,7 @@ describe('mongoose-normalizr', () => {
 
 						const normalized = normalize({ id: 1, type: 'Bar' }, normalizrs.foos);
 
-						expect(normalized).toEqual({
+						expect(normalized).toStrictEqual({
 							result:   { id: 1, schema: 'Bar' },
 							entities: {
 								bars: {
@@ -620,7 +623,7 @@ describe('mongoose-normalizr', () => {
 
 					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toEqual({
+					expect(normalized).toStrictEqual({
 						result:   1,
 						entities: {
 							foos: {
@@ -646,7 +649,7 @@ describe('mongoose-normalizr', () => {
 
 					const normalized = normalize({ id: 1, __t: 'Bar' }, normalizrs.foos);
 
-					expect(normalized).toEqual({
+					expect(normalized).toStrictEqual({
 						result:   1,
 						entities: {
 							foos: {
