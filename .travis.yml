@@ -26,7 +26,7 @@ env:
 before_script:
   - if [[ $MONGOOSE_VERSION ]] ; then npm install mongoose@"$MONGOOSE_VERSION" --no-save; fi
   - if [[ $NORMALIZR_VERSION ]] ; then npm install normalizr@"$NORMALIZR_VERSION" --no-save; fi
-after_success:
+after_script:
   - cat ./coverage/lcov.info | npx coveralls
 stages:
   - name: test
@@ -38,7 +38,7 @@ jobs:
     - stage: release
       before_script: true
       script: skip
-      after_success: true
+      after_script: true
       before_deploy: npm run build
       deploy:
         provider: script
