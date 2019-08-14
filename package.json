@@ -34,6 +34,9 @@
   "eslintConfig": {
     "extends": "saiichihashimoto"
   },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "dependencies": {
     "mongoose-legacy-pluralize": "1.0.2"
   },
@@ -55,6 +58,6 @@
     "normalizr": ">=0.1.1 <4.0.0"
   },
   "engines": {
-    "node": "12.6.0"
+    "node": "12.8.0"
   }
 }
