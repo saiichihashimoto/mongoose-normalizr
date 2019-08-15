@@ -28,14 +28,11 @@ before_script:
   - if [[ $NORMALIZR_VERSION ]] ; then npm install normalizr@"$NORMALIZR_VERSION" --no-save; fi
 after_script:
   - cat ./coverage/lcov.info | npx coveralls
-stages:
-  - name: test
-    if: type = pull_request
-  - name: release
-    if: type = push
 jobs:
   include:
+    - stage: test
     - stage: release
+      if: type = push
       before_script: true
       script: skip
       after_script: true
