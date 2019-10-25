@@ -4,6 +4,7 @@ branches:
   only:
     - master
 notifications:
+  webhooks: https://coveralls.io/webhook
   email:
     recipients:
       - saiichihashimoto@gmail.com
@@ -27,7 +28,7 @@ before_script:
   - if [[ $MONGOOSE_VERSION ]] ; then npm install mongoose@"$MONGOOSE_VERSION" --no-save; fi
   - if [[ $NORMALIZR_VERSION ]] ; then npm install normalizr@"$NORMALIZR_VERSION" --no-save; fi
 after_script:
-  - cat ./coverage/lcov.info | npx coveralls
+  - cat ./coverage/lcov.info | COVERALLS_PARALLEL=true npx coveralls
 jobs:
   include:
     - stage: test
