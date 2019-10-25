@@ -108,7 +108,7 @@ export default (input) => {
 			const {
 				options: {
 					collection = pluralize(modelName),
-				} = {},
+				},
 			} = mongooseSchema;
 
 			return {
@@ -134,7 +134,7 @@ export default (input) => {
 				.filter(([, { mongooseSchema: { discriminatorMapping } }]) => discriminatorMapping)
 				.map(mapValue(
 					({
-						mongooseSchema: { options: { discriminatorKey } = {} },
+						mongooseSchema: { options: { discriminatorKey } },
 					}) => union(normalizrEntities, discriminatorKey)
 				))
 				.reduce(reduceEntries, {}),
