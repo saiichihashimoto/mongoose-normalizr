@@ -49,7 +49,7 @@
     "husky": "3.0.9",
     "jest": "24.1.0",
     "lint-my-app": "3.7.26",
-    "mongoose": "5.7.8",
+    "mongoose": "5.7.9",
     "normalizr": "3.4.1",
     "semver": "6.3.0"
   },
