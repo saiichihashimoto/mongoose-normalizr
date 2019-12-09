@@ -41,9 +41,9 @@
     "mongoose-legacy-pluralize": "1.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "7.7.4",
-    "@babel/core": "7.7.4",
-    "@babel/preset-env": "7.7.4",
+    "@babel/cli": "7.7.5",
+    "@babel/core": "7.7.5",
+    "@babel/preset-env": "7.7.6",
     "cz-conventional-changelog": "3.0.2",
     "eslint-config-saiichihashimoto": "2.0.60",
     "husky": "3.1.0",
