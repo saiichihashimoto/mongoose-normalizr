@@ -46,7 +46,7 @@
     "@babel/preset-env": "7.7.7",
     "cz-conventional-changelog": "3.0.2",
     "eslint-config-saiichihashimoto": "2.1.0",
-    "husky": "4.0.3",
+    "husky": "4.0.6",
     "jest": "24.1.0",
     "lint-my-app": "3.7.41",
     "mongoose": "5.8.3",
