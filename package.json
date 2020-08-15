@@ -48,7 +48,7 @@
     "eslint-config-saiichihashimoto": "2.2.16",
     "husky": "4.2.5",
     "jest": "24.1.0",
-    "lint-my-app": "3.7.49",
+    "lint-my-app": "3.7.65",
     "mongoose": "5.9.2",
     "normalizr": "3.6.0",
     "semver": "7.1.3"
