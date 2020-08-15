@@ -47,7 +47,7 @@
     "cz-conventional-changelog": "3.1.0",
     "eslint-config-saiichihashimoto": "2.1.8",
     "husky": "4.2.3",
-    "jest": "24.1.0",
+    "jest": "26.4.0",
     "lint-my-app": "3.7.49",
     "mongoose": "5.9.2",
     "normalizr": "3.6.0",
