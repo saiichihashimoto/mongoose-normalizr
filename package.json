@@ -43,7 +43,7 @@
   "devDependencies": {
     "@babel/cli": "7.8.4",
     "@babel/core": "7.11.1",
-    "@babel/preset-env": "7.8.6",
+    "@babel/preset-env": "7.11.0",
     "cz-conventional-changelog": "3.2.0",
     "eslint-config-saiichihashimoto": "2.2.16",
     "husky": "4.2.5",
